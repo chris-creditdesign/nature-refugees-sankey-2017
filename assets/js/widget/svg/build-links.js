@@ -28,15 +28,17 @@ function buildLinks() {
 		.style("stroke-width", function(d) {
 			return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 		})
-		.style("stroke", function(d) {
-			return "#000";
+		.style("stroke", (d) => {
+			if (this.selectedCountry.length > 0) {
+				return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+			} else {
+				return "#000";
+			}
 		})
 		.attr("opacity", () => {
-			this.selectedCountry.length > 0 ? 0.1 : 1;
+			console.log(this.selectedCountry.length);
+			return this.selectedCountry.length > 0 ? 1 : 0.1;
 		});
-		// .sort(function(a, b) {
-		// 	return b.dy - a.dy;
-		// });
 
 	// Update
 	this.links
@@ -45,11 +47,16 @@ function buildLinks() {
 		.style("stroke-width", function(d) {
 			return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 		})
-		.style("stroke", function(d) {
-			return "#000";
+		.style("stroke", (d) => {
+			if (this.selectedCountry.length > 0) {
+				return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+			} else {
+				return "#000";
+			}
 		})
 		.attr("opacity", () => {
-			this.selectedCountry.length > 0 ? 0.1 : 1;
+			console.log(this.selectedCountry.length);
+			return this.selectedCountry.length > 0 ? 1 : 0.1;
 		});
 
 	// Exit

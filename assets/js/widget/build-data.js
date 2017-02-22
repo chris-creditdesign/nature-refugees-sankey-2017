@@ -1,11 +1,9 @@
 import d3 from "../d3-bundle";
+import onlyUnique from "./helpers/only-unique";
+import shortName from "./helpers/short-name";
 
 function buildData() {
 	
-	function onlyUnique (elem, index, array) {
-		return array.indexOf(elem) === index;
-	}
-
 	this.graph = {"nodes": [], "links": []};
 	
 	var nodes = [];
@@ -29,10 +27,17 @@ function buildData() {
 
 				"value": parseInt(elem.countryflow_2016, 10)
 			});
+
+			this.origins.push((elem.originregion_name + "-o"));
+			this.destins.push((elem.destinationregion_name + "-d"));
 		}
 	});
 
 	uniqueNames = nodes.filter(onlyUnique);
+
+	this.origins = this.origins.filter(onlyUnique);
+	this.destins = this.destins.filter(onlyUnique);
+	this.continents = this.origins.concat(this.destins).map(shortName).filter(onlyUnique);
 	
 	this.graph.links.forEach((elem, index, array) => {
 		this.graph.links[index].source = uniqueNames.indexOf(this.graph.links[index].source);

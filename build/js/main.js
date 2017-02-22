@@ -4840,12 +4840,17 @@ function buildSvg() {
 	return this;
 }
 
+function onlyUnique(elem, index, array) {
+	return array.indexOf(elem) === index;
+}
+
+function shortName(str) {
+	var newName = str.substr(0, str.length - 2);
+	return newName;
+}
+
 function buildData() {
 	var _this = this;
-
-	function onlyUnique(elem, index, array) {
-		return array.indexOf(elem) === index;
-	}
 
 	this.graph = { "nodes": [], "links": [] };
 
@@ -4869,10 +4874,17 @@ function buildData() {
 
 				"value": parseInt(elem.countryflow_2016, 10)
 			});
+
+			_this.origins.push(elem.originregion_name + "-o");
+			_this.destins.push(elem.destinationregion_name + "-d");
 		}
 	});
 
 	uniqueNames = nodes.filter(onlyUnique);
+
+	this.origins = this.origins.filter(onlyUnique);
+	this.destins = this.destins.filter(onlyUnique);
+	this.continents = this.origins.concat(this.destins).map(shortName).filter(onlyUnique);
 
 	this.graph.links.forEach(function (elem, index, array) {
 		_this.graph.links[index].source = uniqueNames.indexOf(_this.graph.links[index].source);
@@ -4896,9 +4908,25 @@ function buildSankey() {
 	return this;
 }
 
-function shortName(str) {
-	var newName = str.substr(0, str.length - 2);
-	return newName;
+var color$1 = d3.scaleOrdinal(d3.schemeCategory10);
+
+function buildDefs() {
+	var _this = this;
+
+	/* Iterate through each of the colours and create a gradient for each combination */
+	var gradient;
+	this.origins.forEach(function (elem_o, index_o, array_o) {
+		_this.destins.forEach(function (elem_d, index_d, array_d) {
+
+			gradient = _this.svg.append("svg:defs").append("svg:linearGradient").attr("id", elem_o + "-" + elem_d).attr("gradientUnits", "userSpaceOnUse");
+
+			gradient.append("svg:stop").attr("offset", "30%").attr("stop-color", color$1(shortName(elem_o))).attr("stop-opacity", 1);
+
+			gradient.append("svg:stop").attr("offset", "70%").attr("stop-color", color$1(shortName(elem_d))).attr("stop-opacity", 1);
+		});
+	});
+
+	return this;
 }
 
 function format$2(d) {
@@ -4929,21 +4957,28 @@ function buildLinks() {
 	this.links.enter().append("path").attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
-		return "#000";
+		if (_this.selectedCountry.length > 0) {
+			return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+		} else {
+			return "#000";
+		}
 	}).attr("opacity", function () {
-		_this.selectedCountry.length > 0 ? 0.1 : 1;
+		console.log(_this.selectedCountry.length);
+		return _this.selectedCountry.length > 0 ? 1 : 0.1;
 	});
-	// .sort(function(a, b) {
-	// 	return b.dy - a.dy;
-	// });
 
 	// Update
 	this.links.attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
-		return "#000";
+		if (_this.selectedCountry.length > 0) {
+			return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+		} else {
+			return "#000";
+		}
 	}).attr("opacity", function () {
-		_this.selectedCountry.length > 0 ? 0.1 : 1;
+		console.log(_this.selectedCountry.length);
+		return _this.selectedCountry.length > 0 ? 1 : 0.1;
 	});
 
 	// Exit
@@ -4955,8 +4990,6 @@ function buildLinks() {
 
 	return this;
 }
-
-var color$1 = d3.scaleOrdinal(d3.schemeCategory10);
 
 function buildNodes() {
 	var _this = this;
@@ -5017,11 +5050,15 @@ function Widget(data) {
 	this.data = data.data;
 	this.target = data.target ? data.target : "body";
 	this.selectedCountry = "";
+	this.origins = [];
+	this.destins = [];
+	this.continents = [];
 }
 
 Widget.prototype.buildSvg = buildSvg;
 Widget.prototype.buildData = buildData;
 Widget.prototype.buildSankey = buildSankey;
+Widget.prototype.buildDefs = buildDefs;
 Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
@@ -5036,7 +5073,7 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 			data: data
 		});
 
-		myWidget.buildSvg().buildData().buildSankey().buildLinks().buildNodes().buildText();
+		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
 	}
 });
 

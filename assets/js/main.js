@@ -13,6 +13,7 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 		myWidget.buildSvg()
 			.buildData()
 			.buildSankey()
+			.buildDefs()
 			.buildLinks()
 			.buildNodes()
 			.buildText();

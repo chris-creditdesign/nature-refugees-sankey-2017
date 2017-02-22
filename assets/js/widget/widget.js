@@ -1,6 +1,7 @@
 import buildSvg from './svg/build-svg';
 import buildData from "./build-data";
 import buildSankey from "./sankey/build-sankey";
+import buildDefs from "./svg/build-defs";
 import buildLinks from "./svg/build-links";
 import buildNodes from "./svg/build-nodes";
 import buildText from "./svg/build-text";
@@ -15,11 +16,15 @@ function Widget(data) {
 	this.data = data.data;
 	this.target = data.target ? data.target : "body";
 	this.selectedCountry = "";
+	this.origins = [];
+	this.destins = [];
+	this.continents = [];
 }
 
 Widget.prototype.buildSvg = buildSvg;
 Widget.prototype.buildData = buildData;
 Widget.prototype.buildSankey = buildSankey;
+Widget.prototype.buildDefs = buildDefs;
 Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
