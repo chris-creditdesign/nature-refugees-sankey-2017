@@ -18,6 +18,17 @@
           hyphens: auto;
 }
 
+.outerwrapper .key span {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+
+.outerwrapper .key li {
+  display: inline-block;
+  margin-right: 10px;
+}
+
 #sankey-chart {
   margin-top: 20px;
 }
