@@ -1,0 +1,40 @@
+{
+  "name": "nature-refugees-sankey",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c | uglifyjs -c -m > d3.min.js"
+  },
+  "author": "chris-ryan",
+  "devDependencies": {
+    "autoprefixer": "^6.5.3",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-es2015-rollup": "^1.2.0",
+    "browser-sync": "^2.18.2",
+    "d3": "^4.4.0",
+    "d3-array": "^1.0.2",
+    "d3-axis": "^1.0.4",
+    "d3-color": "^1.0.2",
+    "d3-dispatch": "^1.0.2",
+    "d3-format": "^1.0.2",
+    "d3-request": "^1.0.3",
+    "d3-sankey": "^0.4.2",
+    "d3-scale": "^1.0.4",
+    "d3-selection": "^1.0.3",
+    "d3-zoom": "^1.1.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-better-rollup": "^1.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-jshint": "^2.0.4",
+    "gulp-postcss": "^6.2.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^2.0.1",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "pump": "^1.0.1",
+    "rollup": "^0.36.3",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "run-sequence": "^1.2.2"
+  }
+}

@@ -1,0 +1,8 @@
+source,target,value
+Barry-a,Elvis-b,2
+Frodo-a,Elvis-b,2
+Frodo-a,Sarah-b,2
+Barry-a,Alice-b,2
+Elvis-a,Sarah-b,2
+Elvis-a,Alice-b,2
+Sarah-a,Alice-b,10
