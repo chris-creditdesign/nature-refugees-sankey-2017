@@ -297,7 +297,7 @@ var formatLocale = function (locale) {
 };
 
 var locale$1;
-var format$2;
+var format$1;
 var formatPrefix;
 
 defaultLocale({
@@ -309,7 +309,7 @@ defaultLocale({
 
 function defaultLocale(definition) {
   locale$1 = formatLocale(definition);
-  format$2 = locale$1.format;
+  format$1 = locale$1.format;
   formatPrefix = locale$1.formatPrefix;
   return locale$1;
 }
@@ -1055,7 +1055,7 @@ var named = {
   yellowgreen: 0x9acd32
 };
 
-define(Color, color$1, {
+define(Color, color, {
   displayable: function displayable() {
     return this.rgb().displayable();
   },
@@ -1064,7 +1064,7 @@ define(Color, color$1, {
   }
 });
 
-function color$1(format) {
+function color(format) {
   var m;
   format = (format + "").trim().toLowerCase();
   return (m = reHex3.exec(format)) ? (m = parseInt(m[1], 16), new Rgb(m >> 8 & 0xf | m >> 4 & 0x0f0, m >> 4 & 0xf | m & 0xf0, (m & 0xf) << 4 | m & 0xf, 1) // #f00
@@ -1088,7 +1088,7 @@ function rgba(r, g, b, a) {
 }
 
 function rgbConvert(o) {
-  if (!(o instanceof Color)) o = color$1(o);
+  if (!(o instanceof Color)) o = color(o);
   if (!o) return new Rgb();
   o = o.rgb();
   return new Rgb(o.r, o.g, o.b, o.opacity);
@@ -1133,7 +1133,7 @@ function hsla(h, s, l, a) {
 
 function hslConvert(o) {
   if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
-  if (!(o instanceof Color)) o = color$1(o);
+  if (!(o instanceof Color)) o = color(o);
   if (!o) return new Hsl();
   if (o instanceof Hsl) return o;
   o = o.rgb();
@@ -1628,7 +1628,7 @@ var string = function (a, b) {
 var interpolateValue = function (a, b) {
     var t = typeof b === "undefined" ? "undefined" : _typeof(b),
         c;
-    return b == null || t === "boolean" ? constant$1(b) : (t === "number" ? interpolateNumber : t === "string" ? (c = color$1(b)) ? (b = c, rgb$2) : string : b instanceof color$1 ? rgb$2 : b instanceof Date ? date : Array.isArray(b) ? array$2 : isNaN(b) ? object$1 : interpolateNumber)(a, b);
+    return b == null || t === "boolean" ? constant$1(b) : (t === "number" ? interpolateNumber : t === "string" ? (c = color(b)) ? (b = c, rgb$2) : string : b instanceof color ? rgb$2 : b instanceof Date ? date : Array.isArray(b) ? array$2 : isNaN(b) ? object$1 : interpolateNumber)(a, b);
 };
 
 var interpolateRound = function (a, b) {
@@ -1867,7 +1867,7 @@ var tickFormat = function (domain, count, specifier) {
         break;
       }
   }
-  return format$2(specifier);
+  return format$1(specifier);
 };
 
 function linearish(scale) {
@@ -2051,7 +2051,7 @@ function log() {
 
   scale.tickFormat = function (count, specifier) {
     if (specifier == null) specifier = base === 10 ? ".0e" : ",";
-    if (typeof specifier !== "function") specifier = format$2(specifier);
+    if (typeof specifier !== "function") specifier = format$1(specifier);
     if (count === Infinity) return specifier;
     if (count == null) count = 10;
     var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
@@ -3182,13 +3182,13 @@ var colors = function (s) {
   });
 };
 
-colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
+var schemeCategory10 = colors("1f77b4ff7f0e2ca02cd627289467bd8c564be377c27f7f7fbcbd2217becf");
 
 colors("393b795254a36b6ecf9c9ede6379398ca252b5cf6bcedb9c8c6d31bd9e39e7ba52e7cb94843c39ad494ad6616be7969c7b4173a55194ce6dbdde9ed6");
 
 colors("3182bd6baed69ecae1c6dbefe6550dfd8d3cfdae6bfdd0a231a35474c476a1d99bc7e9c0756bb19e9ac8bcbddcdadaeb636363969696bdbdbdd9d9d9");
 
-var schemeCategory20 = colors("1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5");
+colors("1f77b4aec7e8ff7f0effbb782ca02c98df8ad62728ff98969467bdc5b0d58c564bc49c94e377c2f7b6d27f7f7fc7c7c7bcbd22dbdb8d17becf9edae5");
 
 cubehelixLong(cubehelix(300, 0.5, 0.0), cubehelix(-240, 0.5, 1.0));
 
@@ -4089,7 +4089,7 @@ var select = function (selector) {
     return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
 };
 
-var sankey$1 = function () {
+var sankey = function () {
   var sankey = {},
       nodeWidth = 24,
       nodePadding = 8,
@@ -4824,116 +4824,172 @@ var csv = dsv$1("text/csv", csvParse);
 dsv$1("text/tab-separated-values", tsvParse);
 
 var d3 = {
-	format: format$2,
+	format: format$1,
 	scaleOrdinal: ordinal,
-	schemeCategory20: schemeCategory20,
+	schemeCategory10: schemeCategory10,
 	select: select,
-	sankey: sankey$1,
+	sankey: sankey,
 	rgb: rgb$1,
 	csv: csv,
 	nest: nest
 };
 
-var margin = {
-	top: 1,
-	right: 10,
-	bottom: 6,
-	left: 10
-};
+function buildSvg() {
+	this.svg = d3.select(this.target).append("svg").attr("width", this.width + this.margin.left + this.margin.right).attr("height", this.height + this.margin.top + this.margin.bottom).append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-var width = 630 - margin.left - margin.right;
-var height = 800 - margin.top - margin.bottom;
-
-var formatNumber = d3.format(",.0f");
-
-var format$1 = function format$1(d) {
-	return formatNumber(d) + " people";
-};
-
-var color = d3.scaleOrdinal(d3.schemeCategory20);
-
-var svg = d3.select("#sankey-chart").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-var sankey = d3.sankey().nodeWidth(15).nodePadding(10).size([width, height]);
-
-var path = sankey.link();
-
-var graph = { "nodes": [], "links": [] };
-
-function onlyUnique(elem, index, array) {
-	return array.indexOf(elem) === index;
+	return this;
 }
 
-function shortName(str) {
-	var name = str.replace(/ .*/, "");
-	var newName = name.substr(0, name.length - 2);
-	return newName;
-}
+function buildData() {
+	var _this = this;
 
-d3.csv("./data/refugee-data-edit.csv", function (error, data) {
+	function onlyUnique(elem, index, array) {
+		return array.indexOf(elem) === index;
+	}
+
+	this.graph = { "nodes": [], "links": [] };
 
 	var nodes = [];
+	var uniqueNames;
 
-	data.forEach(function (elem, index, array) {
+	this.data.forEach(function (elem, index, array) {
 		if (parseInt(elem.countryflow_2016, 10) > 0) {
-			nodes.push(elem.originregion_name + "-o");
-			nodes.push(elem.destinationregion_name + "-d");
+			nodes.push(elem.origin_name + "-o");
+			nodes.push(elem.destination_name + "-d");
 
-			graph.links.push({
-				"source": elem.originregion_name + "-o",
-				"target": elem.destinationregion_name + "-d",
-				"value": parseInt(elem.countryflow_2016, 10),
+			_this.graph.links.push({
+				"source": elem.origin_name + "-o",
+				"target": elem.destination_name + "-d",
+
 				"origin_name": elem.origin_name + "-o",
-				"destination_name": elem.destination_name + "-d"
+				"destination_name": elem.destination_name + "-d",
+
+				"originregion_name": elem.originregion_name + "-o",
+				"destinationregion_name": elem.destinationregion_name + "-d",
+
+				"value": parseInt(elem.countryflow_2016, 10)
 			});
 		}
 	});
 
-	var uniqueNames = nodes.filter(onlyUnique);
+	uniqueNames = nodes.filter(onlyUnique);
 
-	graph.links.forEach(function (elem, index, array) {
-		graph.links[index].source = uniqueNames.indexOf(graph.links[index].source);
-		graph.links[index].target = uniqueNames.indexOf(graph.links[index].target);
+	this.graph.links.forEach(function (elem, index, array) {
+		_this.graph.links[index].source = uniqueNames.indexOf(_this.graph.links[index].source);
+		_this.graph.links[index].target = uniqueNames.indexOf(_this.graph.links[index].target);
 	});
 
 	uniqueNames.forEach(function (elem, index, array) {
-		graph.nodes.push({ "name": elem });
+		_this.graph.nodes.push({ "name": elem });
 	});
 
-	sankey.nodes(graph.nodes).links(graph.links).layout(32);
+	return this;
+}
 
-	var link = svg.append("g").selectAll(".link").data(graph.links).enter().append("path").attr("class", "link").attr("d", path).style("stroke-width", function (d) {
+function buildSankey() {
+	this.sankey = d3.sankey().nodeWidth(30).nodePadding(10).size([this.width, this.height]);
+
+	this.sankey.nodes(this.graph.nodes).links(this.graph.links).layout(5);
+
+	this.path = this.sankey.link();
+
+	return this;
+}
+
+function shortName(str) {
+	var newName = str.substr(0, str.length - 2);
+	return newName;
+}
+
+function format$2(d) {
+	var formatNumber = d3.format(",.0f");
+	return formatNumber(d) + " people";
+}
+
+function buildLinks() {
+	this.links = this.svg.append("g").attr("class", "links").selectAll(".link").data(this.graph.links).enter().append("path").attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
+	}).style("stroke", function (d) {
+		// return "url(#" + d.source.id + "-" + d.target.id + ")";
+		// console.log(d);
+		return "hotpink";
 	}).sort(function (a, b) {
 		return b.dy - a.dy;
-	}); // What does this do? 
-
-	link.append("title").text(function (d) {
-		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format$1(d.value);
 	});
 
-	var node = svg.append("g").selectAll(".node").data(graph.nodes).enter().append("g").attr("class", "node").attr("transform", function (d) {
+	this.links.append("title").text(function (d) {
+		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format$2(d.value);
+	});
+
+	return this;
+}
+
+var color$1 = d3.scaleOrdinal(d3.schemeCategory10);
+
+function buildNodes() {
+	var _this = this;
+
+	this.nodes = this.svg.append("g").attr("class", "nodes").selectAll(".node").data(this.graph.nodes).enter().append("g").attr("class", "node").attr("transform", function (d) {
 		return "translate(" + d.x + "," + d.y + ")";
 	});
 
-	node.append("rect").attr("height", function (d) {
+	this.nodes.append("rect").attr("height", function (d) {
 		return d.dy;
-	}).attr("width", sankey.nodeWidth()).style("fill", function (d) {
-		d.color = color(shortName(d.name));
-		return d.color;
+	}).attr("width", this.sankey.nodeWidth()).style("fill", function (d) {
+		if (d.x < _this.width / 2) {
+			return color$1(shortName(d.sourceLinks[0].originregion_name));
+		} else {
+			return color$1(shortName(d.targetLinks[0].destinationregion_name));
+		}
 	}).append("title").text(function (d) {
-		return shortName(d.name) + "\n" + format$1(d.value);
+		return shortName(d.name) + "\n" + format$2(d.value);
 	});
 
-	node.append("text").attr("x", -6).attr("y", function (d) {
+	return this;
+}
+
+function buildText() {
+	var _this = this;
+
+	this.nodes.append("text").attr("x", -6).attr("y", function (d) {
 		return d.dy / 2;
 	}).attr("dy", "0.35em").attr("text-anchor", "end").text(function (d) {
 		return shortName(d.name);
 	}).filter(function (d) {
-		return d.x < width / 2;
-	}).attr("x", 6 + sankey.nodeWidth()).attr("text-anchor", "start");
+		return d.x < _this.width / 2;
+	}).attr("x", 6 + this.sankey.nodeWidth()).attr("text-anchor", "start");
 
-	// console.log(graph);
+	return this;
+}
+
+function Widget(data) {
+	this.totalWidth = data.width ? data.width : 630;
+	this.totalHeight = data.height ? data.height : 2500;
+	this.margin = data.margin ? data.margin : { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 };
+	this.width = this.totalWidth - this.margin.left - this.margin.right;
+	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
+	this.data = data.data;
+	this.target = data.target ? data.target : "body";
+}
+
+Widget.prototype.buildSvg = buildSvg;
+Widget.prototype.buildData = buildData;
+Widget.prototype.buildSankey = buildSankey;
+Widget.prototype.buildLinks = buildLinks;
+Widget.prototype.buildNodes = buildNodes;
+Widget.prototype.buildText = buildText;
+
+d3.csv("./data/refugee-data-edit.csv", function (error, data) {
+	if (error) {
+		console.log("error: " + error);
+	} else {
+		var myWidget = new Widget({
+			target: "#sankey-chart",
+			data: data
+		});
+
+		myWidget.buildSvg().buildData().buildSankey().buildLinks().buildNodes().buildText();
+	}
 });
 
 }());
