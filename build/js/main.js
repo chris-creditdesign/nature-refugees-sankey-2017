@@ -4963,7 +4963,6 @@ function buildLinks() {
 			return "#000";
 		}
 	}).attr("opacity", function () {
-		console.log(_this.selectedCountry.length);
 		return _this.selectedCountry.length > 0 ? 1 : 0.1;
 	});
 
@@ -4977,7 +4976,6 @@ function buildLinks() {
 			return "#000";
 		}
 	}).attr("opacity", function () {
-		console.log(_this.selectedCountry.length);
 		return _this.selectedCountry.length > 0 ? 1 : 0.1;
 	});
 
@@ -5041,6 +5039,15 @@ function updateAll() {
 	return this;
 }
 
+function buildKey() {
+
+	d3.select("#temp-key").selectAll("li").data(this.continents).enter().append("li").html(function (d) {
+		return "<span style=\"background-color: " + color$1(d) + "\"></span> " + d;
+	});
+
+	return this;
+}
+
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
@@ -5063,6 +5070,7 @@ Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
+Widget.prototype.buildKey = buildKey;
 
 d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 	if (error) {
@@ -5073,7 +5081,7 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 			data: data
 		});
 
-		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
+		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
 	}
 });
 

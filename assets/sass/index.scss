@@ -14,6 +14,20 @@
 		margin: 0;
 		hyphens: auto;
 	}
+
+	.key {
+
+		span {
+			width: 10px;
+			height: 10px;
+			display: inline-block;
+		}
+
+		li {
+			display: inline-block;
+			margin-right: 10px;
+		}
+	}
 }
 
 // Old crap

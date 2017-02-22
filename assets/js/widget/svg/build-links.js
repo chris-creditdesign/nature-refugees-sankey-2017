@@ -36,7 +36,6 @@ function buildLinks() {
 			}
 		})
 		.attr("opacity", () => {
-			console.log(this.selectedCountry.length);
 			return this.selectedCountry.length > 0 ? 1 : 0.1;
 		});
 
@@ -55,7 +54,6 @@ function buildLinks() {
 			}
 		})
 		.attr("opacity", () => {
-			console.log(this.selectedCountry.length);
 			return this.selectedCountry.length > 0 ? 1 : 0.1;
 		});
 

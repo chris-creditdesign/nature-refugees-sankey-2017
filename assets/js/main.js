@@ -16,7 +16,8 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 			.buildDefs()
 			.buildLinks()
 			.buildNodes()
-			.buildText();
+			.buildText()
+			.buildKey();
 
 	}
 
