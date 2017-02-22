@@ -2,13 +2,13 @@ import d3 from "./d3-bundle";
 
 var margin = {
 	top: 1,
-	right: 1,
+	right: 10,
 	bottom: 6,
-	left: 1
+	left: 10
 };
 
 var width = 630 - margin.left - margin.right;
-var height = 500 - margin.top - margin.bottom;
+var height = 800 - margin.top - margin.bottom;
 
 var formatNumber = d3.format(",.0f");
 
@@ -43,17 +43,24 @@ function shortName(str) {
 	return newName;
 }
 
-d3.csv("./data/d3noob_example.csv", function(error, data) {
+d3.csv("./data/refugee-data-edit.csv", function(error, data) {
   
 	var nodes = [];
 	
 	data.forEach(function (elem, index, array) {
-		nodes.push(elem.source);
-		nodes.push(elem.target);
-		
-		graph.links.push({"source": elem.source, "target": elem.target, "value": +elem.value});
+		if (parseInt(elem.countryflow_2016, 10) > 0) {
+			nodes.push(elem.originregion_name + "-o" );
+			nodes.push(elem.destinationregion_name + "-d");
+			
+			graph.links.push({
+				"source": (elem.originregion_name + "-o"), 
+				"target": (elem.destinationregion_name + "-d"), 
+				"value": parseInt(elem.countryflow_2016, 10),
+				"origin_name": (elem.origin_name + "-o"),
+				"destination_name": (elem.destination_name + "-d")
+			});
+		}
 	});
-
 
 	var uniqueNames = nodes.filter(onlyUnique);
 	
@@ -85,7 +92,7 @@ d3.csv("./data/d3noob_example.csv", function(error, data) {
 
 	link.append("title")
 		.text(function(d) {
-			return shortName(d.source.name) + " to " + shortName(d.target.name) + "\n" + format(d.value);
+			return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format(d.value);
 		});
 
 	var node = svg.append("g").selectAll(".node")
@@ -129,6 +136,6 @@ d3.csv("./data/d3noob_example.csv", function(error, data) {
 
 
 
-	console.log(graph);
+	// console.log(graph);
 
 });

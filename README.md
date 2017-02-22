@@ -2,6 +2,12 @@
 
 Interactive graphic for @naturenews
 
+## Collect and compile data
+
+	sh compile-data.sh
+
+You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migration-plot](https://github.com/null2/circular-migration-plot).
+
 ## Build 
 
 	gulp

@@ -4,3 +4,5 @@
 /ref
 *.log
 /dist
+/build/data/refugee-data.csv
+/build/data/refugee-data.xlsx
