@@ -4907,15 +4907,47 @@ function format$2(d) {
 }
 
 function buildLinks() {
-	this.links = this.svg.append("g").attr("class", "links").selectAll(".link").data(this.graph.links).enter().append("path").attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
+	var _this = this;
+
+	var that = this;
+
+	function isSelected(elem) {
+		if (that.selectedCountry.slice(-2) === "-o") {
+			return elem.origin_name === that.selectedCountry;
+		} else if (that.selectedCountry.slice(-2) === "-d") {
+			return elem.destination_name === that.selectedCountry;
+		} else {
+			return true;
+		}
+	}
+
+	var filterdLinks = this.graph.links.filter(isSelected);
+
+	this.links = this.svg.selectAll(".link").data(filterdLinks);
+
+	// Enter	
+	this.links.enter().append("path").attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
-		// return "url(#" + d.source.id + "-" + d.target.id + ")";
-		// console.log(d);
-		return "hotpink";
-	}).sort(function (a, b) {
-		return b.dy - a.dy;
+		return "#000";
+	}).attr("opacity", function () {
+		_this.selectedCountry.length > 0 ? 0.1 : 1;
 	});
+	// .sort(function(a, b) {
+	// 	return b.dy - a.dy;
+	// });
+
+	// Update
+	this.links.attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
+		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
+	}).style("stroke", function (d) {
+		return "#000";
+	}).attr("opacity", function () {
+		_this.selectedCountry.length > 0 ? 0.1 : 1;
+	});
+
+	// Exit
+	this.links.exit().remove();
 
 	this.links.append("title").text(function (d) {
 		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format$2(d.value);
@@ -4941,6 +4973,14 @@ function buildNodes() {
 		} else {
 			return color$1(shortName(d.targetLinks[0].destinationregion_name));
 		}
+	}).attr("cursor", "pointer").on("click", function (d) {
+		if (_this.selectedCountry !== d.name) {
+			_this.selectedCountry = d.name;
+		} else {
+			_this.selectedCountry = "";
+		}
+
+		_this.updateAll();
 	}).append("title").text(function (d) {
 		return shortName(d.name) + "\n" + format$2(d.value);
 	});
@@ -4962,6 +5002,12 @@ function buildText() {
 	return this;
 }
 
+function updateAll() {
+	this.buildLinks();
+
+	return this;
+}
+
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
@@ -4970,6 +5016,7 @@ function Widget(data) {
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 	this.data = data.data;
 	this.target = data.target ? data.target : "body";
+	this.selectedCountry = "";
 }
 
 Widget.prototype.buildSvg = buildSvg;
@@ -4978,6 +5025,7 @@ Widget.prototype.buildSankey = buildSankey;
 Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
+Widget.prototype.updateAll = updateAll;
 
 d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 	if (error) {

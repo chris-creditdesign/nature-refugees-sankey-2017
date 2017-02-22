@@ -4,6 +4,7 @@ import format from "../helpers/format";
 import color from "../helpers/color";
 
 function buildNodes() {
+
 	this.nodes = this.svg.append("g")
 		.attr("class","nodes")
 		.selectAll(".node")
@@ -26,6 +27,16 @@ function buildNodes() {
 			} else {
 				return color(shortName(d.targetLinks[0].destinationregion_name));
 			}
+		})
+		.attr("cursor", "pointer")
+		.on("click", (d) => {
+			if (this.selectedCountry !== d.name) {
+				this.selectedCountry = d.name;
+			} else {
+				this.selectedCountry = "";
+			}
+
+			this.updateAll();
 		})
 		.append("title")
 		.text(function(d) {

@@ -4,6 +4,7 @@ import buildSankey from "./sankey/build-sankey";
 import buildLinks from "./svg/build-links";
 import buildNodes from "./svg/build-nodes";
 import buildText from "./svg/build-text";
+import updateAll from "./update-all";
 
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
@@ -13,6 +14,7 @@ function Widget(data) {
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 	this.data = data.data;
 	this.target = data.target ? data.target : "body";
+	this.selectedCountry = "";
 }
 
 Widget.prototype.buildSvg = buildSvg;
@@ -21,5 +23,6 @@ Widget.prototype.buildSankey = buildSankey;
 Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
+Widget.prototype.updateAll = updateAll;
 
 export default Widget;
