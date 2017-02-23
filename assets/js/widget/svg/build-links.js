@@ -45,6 +45,23 @@ function buildLinks() {
 		})
 		.attr("opacity", () => {
 			return this.selectedCountry.length > 0 ? 1 : 0.1;
+		})
+		.on("mouseover", function(d) {
+			d3.select(this)
+				.attr("opacity", () => {
+					return that.selectedCountry.length > 0 ? 1 : 0.3;
+				});
+
+			that.buildTooltip(d);
+		})
+		.on("mouseout", function() {
+			d3.select(this)
+				.attr("opacity", () => {
+					return that.selectedCountry.length > 0 ? 1 : 0.1;
+				});
+
+			d3.select("#widget-tooltip")
+				.classed("hidden", true);
 		});
 
 	// Update
@@ -63,17 +80,29 @@ function buildLinks() {
 		})
 		.attr("opacity", () => {
 			return this.selectedCountry.length > 0 ? 1 : 0.1;
+		})
+		.on("mouseover", function(d) {
+			d3.select(this)
+				.attr("opacity", () => {
+					return that.selectedCountry.length > 0 ? 1 : 0.3;
+				});
+
+			that.buildTooltip(d);
+		})
+		.on("mouseout", function() {
+			d3.select(this)
+				.attr("opacity", () => {
+					return that.selectedCountry.length > 0 ? 1 : 0.1;
+				});
+
+			d3.select("#widget-tooltip")
+				.classed("hidden", true);
 		});
 
 	// Exit
 	this.links
 		.exit()
 		.remove();
-
-	// this.links.append("title")
-	// 	.text(function(d) {
-	// 		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format(d.value);
-	// 	});
 
 	return this;
 }

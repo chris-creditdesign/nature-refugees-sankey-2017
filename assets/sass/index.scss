@@ -28,11 +28,36 @@
 			margin-right: 10px;
 		}
 	}
-}
 
-// Old crap
-#sankey-chart {
-	margin-top: 20px;
+	.chart {
+		position: relative;
+		margin-top: 20px;
+	}
+
+	.widget-tooltip {
+		position: absolute;
+		height: auto;
+		padding: 6px 10px 6px 15px;
+		width: 150px;
+		color: #eee;
+		background-color: #333;
+		pointer-events: none;
+		font-size: 0.8em;
+		line-height: 1.4em;
+		opacity: 1;
+		-webkit-transition: opacity 0.2s ease;
+		transition: opacity 0.2s ease;
+
+		p {
+			padding: 0;
+		}
+
+	}
+
+	.hidden {
+		opacity: 0;
+		pointer-events: none;
+	}
 }
 
 .node rect {
@@ -48,10 +73,5 @@
 
 .link {
 	fill: none;
-	// stroke: #000;
-	// stroke-opacity: .15;
+	stroke: #000;
 }
-
-// .link:hover {
-// 	stroke-opacity: .5;
-// }

@@ -29,6 +29,13 @@ function buildNodes() {
 			}
 		})
 		.attr("cursor", "pointer")
+		.on("mouseover", (d) => {
+			this.buildTooltip(d);
+		})
+		.on("mouseout", () => {
+			d3.select("#widget-tooltip")
+				.classed("hidden", true);
+		})
 		.on("click", (d) => {
 			if (this.selectedCountry !== d.name) {
 				this.selectedCountry = d.name;

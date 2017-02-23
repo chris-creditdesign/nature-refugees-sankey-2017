@@ -34,6 +34,8 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 - Add print colours
 - Add correct country and continent names
 - Add collision detection for text
+- Remove titles
+- Simplify the links opacity on hover logic
 
 Created using the [d3-sankey](https://github.com/d3/d3-sankey) plugin for D3 4.0.
 

@@ -7,6 +7,7 @@ import buildNodes from "./svg/build-nodes";
 import buildText from "./svg/build-text";
 import updateAll from "./update-all";
 import buildKey from "./ui/build-key";
+import buildTooltip from "./ui/build-tooltip";
 
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
@@ -31,5 +32,6 @@ Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
+Widget.prototype.buildTooltip = buildTooltip;
 
 export default Widget;
