@@ -115,6 +115,7 @@ var formatTypes = {
   }
 };
 
+// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -5035,6 +5036,12 @@ function buildText() {
 	}).filter(function (d) {
 		return d.x < _this.width / 2;
 	}).attr("x", 6 + this.sankey.nodeWidth()).attr("text-anchor", "start");
+
+	this.nodes.selectAll("text").filter(function (d) {
+		// Only label countries with more than
+		// 25,000 people
+		return d.value < 25000;
+	}).remove();
 
 	return this;
 }
