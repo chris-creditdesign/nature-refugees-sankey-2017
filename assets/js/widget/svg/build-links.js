@@ -19,7 +19,7 @@ function buildLinks() {
 
 	if (!this.g_links) {
 		// Only make the group if it doesn't already exist
-		this.g_links = this.svg.append("g")
+		this.g_links = this.svg_g.append("g")
 			.attr("class", "links");
 
 	}

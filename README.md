@@ -22,18 +22,11 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 
 ## To Do
 
-- click to show just relevant nodes
-- click to show just relevant text
-- add gradient to links
-- add proper tooltips
 - Add continent view
-- Put links in group so that text is above links
 - Add drop down to choose country
-- Make nodes at least 1px thick
 - Add transitions?
 - Add print colours
 - Add correct country and continent names
-- Add collision detection for text
 - Remove titles
 - Simplify the links opacity on hover logic
 - Add button to switch between continents and countries 

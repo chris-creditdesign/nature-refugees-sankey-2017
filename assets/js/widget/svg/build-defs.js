@@ -9,7 +9,7 @@ function buildDefs() {
 	this.origins.forEach((elem_o, index_o, array_o) => {
 		this.destins.forEach((elem_d, index_d, array_d) => {
 
-				gradient = this.svg.append("svg:defs")
+				gradient = this.svg_g.append("svg:defs")
 					.append("svg:linearGradient")
 						.attr("id", elem_o + "-" + elem_d)
 						.attr("gradientUnits", "userSpaceOnUse");

@@ -8,6 +8,7 @@ import buildText from "./svg/build-text";
 import updateAll from "./update-all";
 import buildKey from "./ui/build-key";
 import buildTooltip from "./ui/build-tooltip";
+import removeSvg from "./svg/remove-svg";
 
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
@@ -23,6 +24,16 @@ function Widget(data) {
 	this.continents = [];
 }
 
+Widget.prototype.updateProps = function(data) {
+	this.totalWidth = data.width ? data.width : 630;
+	this.totalHeight = data.height ? data.height : 2500;
+	this.margin = data.margin ? data.margin : {'top': 0, 'left': 10, 'bottom': 10, 'right': 10};
+	this.width = this.totalWidth - this.margin.left - this.margin.right;
+	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
+
+	return this;
+};
+
 Widget.prototype.buildSvg = buildSvg;
 Widget.prototype.buildData = buildData;
 Widget.prototype.buildSankey = buildSankey;
@@ -33,5 +44,6 @@ Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.removeSvg = removeSvg;
 
 export default Widget;

@@ -6,7 +6,7 @@ import color from "../helpers/color";
 function buildNodes() {
 	var that = this;
 
-	this.nodes = this.svg.append("g")
+	this.nodes = this.svg_g.append("g")
 		.attr("class","nodes")
 		.selectAll(".node")
 		.data(this.graph.nodes)

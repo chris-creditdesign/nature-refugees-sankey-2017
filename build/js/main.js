@@ -4835,7 +4835,9 @@ var d3 = {
 };
 
 function buildSvg() {
-	this.svg = d3.select(this.target).append("svg").attr("width", this.width + this.margin.left + this.margin.right).attr("height", this.height + this.margin.top + this.margin.bottom).append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+	this.svg = d3.select(this.target).append("svg").attr("width", this.width + this.margin.left + this.margin.right).attr("height", this.height + this.margin.top + this.margin.bottom);
+
+	this.svg_g = this.svg.append("g").attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
 	return this;
 }
@@ -4918,7 +4920,7 @@ function buildDefs() {
 	this.origins.forEach(function (elem_o, index_o, array_o) {
 		_this.destins.forEach(function (elem_d, index_d, array_d) {
 
-			gradient = _this.svg.append("svg:defs").append("svg:linearGradient").attr("id", elem_o + "-" + elem_d).attr("gradientUnits", "userSpaceOnUse");
+			gradient = _this.svg_g.append("svg:defs").append("svg:linearGradient").attr("id", elem_o + "-" + elem_d).attr("gradientUnits", "userSpaceOnUse");
 
 			gradient.append("svg:stop").attr("offset", "30%").attr("stop-color", color$1(shortName(elem_o))).attr("stop-opacity", 1);
 
@@ -4953,7 +4955,7 @@ function buildLinks() {
 
 	if (!this.g_links) {
 		// Only make the group if it doesn't already exist
-		this.g_links = this.svg.append("g").attr("class", "links");
+		this.g_links = this.svg_g.append("g").attr("class", "links");
 	}
 
 	this.links = this.g_links.selectAll("path").data(filterdLinks);
@@ -5019,7 +5021,7 @@ function buildNodes() {
 
 	var that = this;
 
-	this.nodes = this.svg.append("g").attr("class", "nodes").selectAll(".node").data(this.graph.nodes).enter().append("g").attr("class", "node").attr("transform", function (d) {
+	this.nodes = this.svg_g.append("g").attr("class", "nodes").selectAll(".node").data(this.graph.nodes).enter().append("g").attr("class", "node").attr("transform", function (d) {
 		return "translate(" + d.x + "," + d.y + ")";
 	});
 
@@ -5119,6 +5121,18 @@ function buildTooltip(d, node) {
 	return this;
 }
 
+function removeSvg() {
+	console.log("We're removing the svg");
+	this.svg.remove();
+
+	// delete this.svg;
+	// delete this.nodes;
+	// delete this.links;
+	delete this.g_links;
+
+	return this;
+}
+
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
@@ -5133,6 +5147,16 @@ function Widget(data) {
 	this.continents = [];
 }
 
+Widget.prototype.updateProps = function (data) {
+	this.totalWidth = data.width ? data.width : 630;
+	this.totalHeight = data.height ? data.height : 2500;
+	this.margin = data.margin ? data.margin : { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 };
+	this.width = this.totalWidth - this.margin.left - this.margin.right;
+	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
+
+	return this;
+};
+
 Widget.prototype.buildSvg = buildSvg;
 Widget.prototype.buildData = buildData;
 Widget.prototype.buildSankey = buildSankey;
@@ -5143,17 +5167,38 @@ Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.removeSvg = removeSvg;
 
 d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 	if (error) {
 		console.log("error: " + error);
 	} else {
+
+		var didResize = false;
+
 		var myWidget = new Widget({
 			target: "#sankey-chart",
+			width: d3.select("#content").node().clientWidth,
 			data: data
 		});
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
+
+		d3.select(window).on("resize", function () {
+
+			didResize = true;
+
+			/* Throttle the resize */
+			setTimeout(function () {
+				if (didResize) {
+					myWidget.removeSvg().updateProps({
+						width: d3.select("#content").node().clientWidth
+					}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
+
+					didResize = false;
+				}
+			}, 60);
+		});
 	}
 });
 
