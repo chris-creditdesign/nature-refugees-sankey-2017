@@ -26,6 +26,14 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 - click to show just relevant text
 - add gradient to links
 - add proper tooltips
+- Add continent view
+- Put links in group so that text is above links
+- Add drop down to choose country
+- Make nodes at least 1px thick
+- Add transitions?
+- Add print colours
+- Add correct country and continent names
+- Add collision detection for text
 
 Created using the [d3-sankey](https://github.com/d3/d3-sankey) plugin for D3 4.0.
 

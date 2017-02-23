@@ -17,9 +17,17 @@ function buildLinks() {
 
 	var filterdLinks = this.graph.links.filter(isSelected);
 
-	this.links = this.svg.selectAll(".link")
-		.data(filterdLinks);
+	if (!this.g_links) {
+		// Only make the group if it doesn't already exist
+		this.g_links = this.svg.append("g")
+			.attr("class", "links");
 
+	}
+
+	this.links = this.g_links
+		.selectAll("path")
+		.data(filterdLinks);
+	
 	// Enter	
 	this.links.enter()
 		.append("path")
@@ -62,10 +70,10 @@ function buildLinks() {
 		.exit()
 		.remove();
 
-	this.links.append("title")
-		.text(function(d) {
-			return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format(d.value);
-		});
+	// this.links.append("title")
+	// 	.text(function(d) {
+	// 		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format(d.value);
+	// 	});
 
 	return this;
 }
