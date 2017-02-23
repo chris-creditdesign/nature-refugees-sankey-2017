@@ -5003,7 +5003,7 @@ function buildNodes() {
 	});
 
 	this.nodes.append("rect").attr("height", function (d) {
-		return d.dy;
+		return Math.max(1, d.dy);
 	}).attr("width", this.sankey.nodeWidth()).style("fill", function (d) {
 		if (d.x < _this.width / 2) {
 			return color$1(shortName(d.sourceLinks[0].originregion_name));

@@ -18,7 +18,7 @@ function buildNodes() {
 
 	this.nodes.append("rect")
 		.attr("height", function(d) {
-			return d.dy;
+			return Math.max(1, d.dy);
 		})
 		.attr("width", this.sankey.nodeWidth())
 		.style("fill", (d) => {
