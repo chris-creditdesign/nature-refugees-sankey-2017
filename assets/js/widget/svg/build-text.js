@@ -18,6 +18,14 @@ function buildText() {
 		.attr("x", 6 + this.sankey.nodeWidth())
 		.attr("text-anchor", "start");
 
+	this.nodes.selectAll("text")
+		.filter(function(d) {
+			// Only label countries with more than
+			// 25,000 people
+			return d.value < 25000;
+		})
+		.remove();
+
 	return this;
 }
 
