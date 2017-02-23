@@ -52,7 +52,7 @@ function buildLinks() {
 					return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 				});
 
-			that.buildTooltip(d);
+			that.buildTooltip(d, this);
 		})
 		.on("mouseout", function() {
 			d3.select(this)
@@ -87,7 +87,7 @@ function buildLinks() {
 					return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 				});
 
-			that.buildTooltip(d);
+			that.buildTooltip(d, this);
 		})
 		.on("mouseout", function() {
 			d3.select(this)

@@ -4,6 +4,7 @@ import format from "../helpers/format";
 import color from "../helpers/color";
 
 function buildNodes() {
+	var that = this;
 
 	this.nodes = this.svg.append("g")
 		.attr("class","nodes")
@@ -29,8 +30,8 @@ function buildNodes() {
 			}
 		})
 		.attr("cursor", "pointer")
-		.on("mouseover", (d) => {
-			this.buildTooltip(d);
+		.on("mouseover", function (d) {
+			that.buildTooltip(d, this);
 		})
 		.on("mouseout", () => {
 			d3.select("#widget-tooltip")
@@ -44,10 +45,6 @@ function buildNodes() {
 			}
 
 			this.updateAll();
-		})
-		.append("title")
-		.text(function(d) {
-			return shortName(d.name) + "\n" + format(d.value);
 		});
 
 	return this;

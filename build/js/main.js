@@ -4974,7 +4974,7 @@ function buildLinks() {
 			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 		});
 
-		that.buildTooltip(d);
+		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
 		d3.select(this).attr("opacity", function () {
 			return that.selectedCountry.length > 0 ? 0.6 : 0.1;
@@ -4999,7 +4999,7 @@ function buildLinks() {
 			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 		});
 
-		that.buildTooltip(d);
+		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
 		d3.select(this).attr("opacity", function () {
 			return that.selectedCountry.length > 0 ? 0.6 : 0.1;
@@ -5017,6 +5017,8 @@ function buildLinks() {
 function buildNodes() {
 	var _this = this;
 
+	var that = this;
+
 	this.nodes = this.svg.append("g").attr("class", "nodes").selectAll(".node").data(this.graph.nodes).enter().append("g").attr("class", "node").attr("transform", function (d) {
 		return "translate(" + d.x + "," + d.y + ")";
 	});
@@ -5030,7 +5032,7 @@ function buildNodes() {
 			return color$1(shortName(d.targetLinks[0].destinationregion_name));
 		}
 	}).attr("cursor", "pointer").on("mouseover", function (d) {
-		_this.buildTooltip(d);
+		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
 		d3.select("#widget-tooltip").classed("hidden", true);
 	}).on("click", function (d) {
@@ -5041,8 +5043,6 @@ function buildNodes() {
 		}
 
 		_this.updateAll();
-	}).append("title").text(function (d) {
-		return shortName(d.name) + "\n" + format$2(d.value);
 	});
 
 	return this;
@@ -5083,7 +5083,7 @@ function buildKey() {
 	return this;
 }
 
-function buildTooltip(d) {
+function buildTooltip(d, node) {
 	var that = this;
 	var data = d;
 
@@ -5091,18 +5091,7 @@ function buildTooltip(d) {
 		if (d.name) {
 			return d.y + d.dy + "px";
 		} else {
-			var sourceY = d.source.y;
-			var sourceHeight = d.source.dy;
-			var targetY = d.target.y;
-			var targetHeight = d.target.dy;
-
-			if (sourceY > targetY) {
-				var height = sourceY - targetY + sourceHeight;
-				return targetY + height / 2 + "px";
-			} else {
-				var _height = targetY - sourceY + targetHeight;
-				return sourceY + _height / 2 + "px";
-			}
+			return node.getBBox().y + node.getBBox().height / 2 + "px";
 		}
 	}).style("left", function () {
 		// console.log(d3.select(this).node().getBoundingClientRect().width);

@@ -2,7 +2,7 @@ import d3 from "../../d3-bundle";
 import shortName from "../helpers/short-name";
 import format from "../helpers/format";
 
-function buildTooltip(d) {
+function buildTooltip(d, node) {
 	var that = this;
 	var data = d;
 
@@ -12,18 +12,7 @@ function buildTooltip(d) {
 			if (d.name) {
 				return `${d.y + d.dy}px`;
 			} else {
-				let sourceY = d.source.y;
-				let sourceHeight = d.source.dy;
-				let targetY = d.target.y
-				let targetHeight = d.target.dy
-
-				if (sourceY > targetY) {
-					let height = (sourceY - targetY) + sourceHeight;
-					return `${targetY + (height / 2)}px`;
-				} else {
-					let height = (targetY - sourceY) + targetHeight;
-					return `${sourceY + (height / 2)}px`;
-				}
+				return `${node.getBBox().y + (node.getBBox().height / 2)}px`;
 			}
 		})
 		.style("left", function () {
