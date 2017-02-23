@@ -115,7 +115,6 @@ var formatTypes = {
   }
 };
 
-// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -4970,6 +4969,18 @@ function buildLinks() {
 		}
 	}).attr("opacity", function () {
 		return _this.selectedCountry.length > 0 ? 1 : 0.1;
+	}).on("mouseover", function (d) {
+		d3.select(this).attr("opacity", function () {
+			return that.selectedCountry.length > 0 ? 1 : 0.3;
+		});
+
+		that.buildTooltip(d);
+	}).on("mouseout", function () {
+		d3.select(this).attr("opacity", function () {
+			return that.selectedCountry.length > 0 ? 1 : 0.1;
+		});
+
+		d3.select("#widget-tooltip").classed("hidden", true);
 	});
 
 	// Update
@@ -4983,15 +4994,22 @@ function buildLinks() {
 		}
 	}).attr("opacity", function () {
 		return _this.selectedCountry.length > 0 ? 1 : 0.1;
+	}).on("mouseover", function (d) {
+		d3.select(this).attr("opacity", function () {
+			return that.selectedCountry.length > 0 ? 1 : 0.3;
+		});
+
+		that.buildTooltip(d);
+	}).on("mouseout", function () {
+		d3.select(this).attr("opacity", function () {
+			return that.selectedCountry.length > 0 ? 1 : 0.1;
+		});
+
+		d3.select("#widget-tooltip").classed("hidden", true);
 	});
 
 	// Exit
 	this.links.exit().remove();
-
-	// this.links.append("title")
-	// 	.text(function(d) {
-	// 		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format(d.value);
-	// 	});
 
 	return this;
 }
@@ -5011,7 +5029,11 @@ function buildNodes() {
 		} else {
 			return color$1(shortName(d.targetLinks[0].destinationregion_name));
 		}
-	}).attr("cursor", "pointer").on("click", function (d) {
+	}).attr("cursor", "pointer").on("mouseover", function (d) {
+		_this.buildTooltip(d);
+	}).on("mouseout", function () {
+		d3.select("#widget-tooltip").classed("hidden", true);
+	}).on("click", function (d) {
 		if (_this.selectedCountry !== d.name) {
 			_this.selectedCountry = d.name;
 		} else {
@@ -5061,6 +5083,53 @@ function buildKey() {
 	return this;
 }
 
+function buildTooltip(d) {
+	var that = this;
+	var data = d;
+
+	d3.select("#widget-tooltip").classed("hidden", false).style("top", function () {
+		if (d.name) {
+			return d.y + d.dy + "px";
+		} else {
+			var sourceY = d.source.y;
+			var sourceHeight = d.source.dy;
+			var targetY = d.target.y;
+			var targetHeight = d.target.dy;
+
+			if (sourceY > targetY) {
+				var height = sourceY - targetY + sourceHeight;
+				return targetY + height / 2 + "px";
+			} else {
+				var _height = targetY - sourceY + targetHeight;
+				return sourceY + _height / 2 + "px";
+			}
+		}
+	}).style("left", function () {
+		// console.log(d3.select(this).node().getBoundingClientRect().width);
+
+		if (data.name) {
+			// It is a node
+			if (data.x > that.width / 2) {
+				// It is on the right
+				return that.width - d3.select(this).node().getBoundingClientRect().width - that.sankey.nodeWidth() + "px";
+			} else {
+				// It is on the left
+				return that.sankey.nodeWidth() + 20 + "px";
+			}
+		} else {
+			return that.width / 2 - d3.select(this).node().getBoundingClientRect().width / 2 + "px";
+		}
+	}).select("p").text(function () {
+		if (d.name) {
+			return shortName(d.name) + ": " + format$2(d.value);
+		} else {
+			return shortName(d.origin_name) + " to " + shortName(d.destination_name) + ": " + format$2(d.value);
+		}
+	});
+
+	return this;
+}
+
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
@@ -5084,6 +5153,7 @@ Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
+Widget.prototype.buildTooltip = buildTooltip;
 
 d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 	if (error) {
