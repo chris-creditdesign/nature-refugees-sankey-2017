@@ -44,12 +44,12 @@ function buildLinks() {
 			}
 		})
 		.attr("opacity", () => {
-			return this.selectedCountry.length > 0 ? 1 : 0.1;
+			return this.selectedCountry.length > 0 ? 0.6 : 0.1;
 		})
 		.on("mouseover", function(d) {
 			d3.select(this)
 				.attr("opacity", () => {
-					return that.selectedCountry.length > 0 ? 1 : 0.3;
+					return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 				});
 
 			that.buildTooltip(d);
@@ -57,7 +57,7 @@ function buildLinks() {
 		.on("mouseout", function() {
 			d3.select(this)
 				.attr("opacity", () => {
-					return that.selectedCountry.length > 0 ? 1 : 0.1;
+					return that.selectedCountry.length > 0 ? 0.6 : 0.1;
 				});
 
 			d3.select("#widget-tooltip")
@@ -79,12 +79,12 @@ function buildLinks() {
 			}
 		})
 		.attr("opacity", () => {
-			return this.selectedCountry.length > 0 ? 1 : 0.1;
+			return this.selectedCountry.length > 0 ? 0.6 : 0.1;
 		})
 		.on("mouseover", function(d) {
 			d3.select(this)
 				.attr("opacity", () => {
-					return that.selectedCountry.length > 0 ? 1 : 0.3;
+					return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 				});
 
 			that.buildTooltip(d);
@@ -92,7 +92,7 @@ function buildLinks() {
 		.on("mouseout", function() {
 			d3.select(this)
 				.attr("opacity", () => {
-					return that.selectedCountry.length > 0 ? 1 : 0.1;
+					return that.selectedCountry.length > 0 ? 0.6 : 0.1;
 				});
 
 			d3.select("#widget-tooltip")

@@ -36,6 +36,7 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 - Add collision detection for text
 - Remove titles
 - Simplify the links opacity on hover logic
+- Add button to switch between continents and countries 
 
 Created using the [d3-sankey](https://github.com/d3/d3-sankey) plugin for D3 4.0.
 

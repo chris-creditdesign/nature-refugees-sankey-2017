@@ -4968,16 +4968,16 @@ function buildLinks() {
 			return "#000";
 		}
 	}).attr("opacity", function () {
-		return _this.selectedCountry.length > 0 ? 1 : 0.1;
+		return _this.selectedCountry.length > 0 ? 0.6 : 0.1;
 	}).on("mouseover", function (d) {
 		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 1 : 0.3;
+			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 		});
 
 		that.buildTooltip(d);
 	}).on("mouseout", function () {
 		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 1 : 0.1;
+			return that.selectedCountry.length > 0 ? 0.6 : 0.1;
 		});
 
 		d3.select("#widget-tooltip").classed("hidden", true);
@@ -4993,16 +4993,16 @@ function buildLinks() {
 			return "#000";
 		}
 	}).attr("opacity", function () {
-		return _this.selectedCountry.length > 0 ? 1 : 0.1;
+		return _this.selectedCountry.length > 0 ? 0.6 : 0.1;
 	}).on("mouseover", function (d) {
 		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 1 : 0.3;
+			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
 		});
 
 		that.buildTooltip(d);
 	}).on("mouseout", function () {
 		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 1 : 0.1;
+			return that.selectedCountry.length > 0 ? 0.6 : 0.1;
 		});
 
 		d3.select("#widget-tooltip").classed("hidden", true);
