@@ -4899,9 +4899,9 @@ function buildData() {
 }
 
 function buildSankey() {
-	this.sankey = d3.sankey().nodeWidth(30).nodePadding(10).size([this.width, this.height]);
+	this.sankey = d3.sankey().nodeWidth(30).nodePadding(5).size([this.width, this.height]);
 
-	this.sankey.nodes(this.graph.nodes).links(this.graph.links).layout(5);
+	this.sankey.nodes(this.graph.nodes).links(this.graph.links).layout(32);
 
 	this.path = this.sankey.link();
 
@@ -4951,7 +4951,12 @@ function buildLinks() {
 
 	var filterdLinks = this.graph.links.filter(isSelected);
 
-	this.links = this.svg.selectAll(".link").data(filterdLinks);
+	if (!this.g_links) {
+		// Only make the group if it doesn't already exist
+		this.g_links = this.svg.append("g").attr("class", "links");
+	}
+
+	this.links = this.g_links.selectAll("path").data(filterdLinks);
 
 	// Enter	
 	this.links.enter().append("path").attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
@@ -4982,9 +4987,10 @@ function buildLinks() {
 	// Exit
 	this.links.exit().remove();
 
-	this.links.append("title").text(function (d) {
-		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format$2(d.value);
-	});
+	// this.links.append("title")
+	// 	.text(function(d) {
+	// 		return shortName(d.origin_name) + " to " + shortName(d.destination_name) + "\n" + format(d.value);
+	// 	});
 
 	return this;
 }
