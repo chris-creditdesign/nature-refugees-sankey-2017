@@ -4853,6 +4853,9 @@ function shortName(str) {
 
 function correctNames(str) {
 	switch (str) {
+		case "NorthAmerica":
+			return "North America";
+			break;
 		case "FmrUSSR":
 			return "Former Soviet Union";
 			break;
@@ -4862,7 +4865,7 @@ function correctNames(str) {
 		case "SouthAsia":
 			return "South Asia";
 			break;
-		case "East Asia":
+		case "EastAsia":
 			return "East Asia";
 			break;
 		case "SoutheastAsia":
@@ -4877,11 +4880,32 @@ function correctNames(str) {
 		case "DR Congo":
 			return "Democratic Republic of the Congo";
 			break;
+		case "other Africa":
+			return "Other Africa";
+			break;
 		case "other Fmr USSR":
 			return "Other former Soviet Union";
 			break;
 		case "Palestina":
 			return "Palestinian territories";
+			break;
+		case "stateless":
+			return "Stateless";
+			break;
+		case "other West Asia":
+			return "Other West Asia";
+			break;
+		case "other South Asia":
+			return "Other South Asia";
+			break;
+		case "other Southeast Asia":
+			return "Other Southeast Asia";
+			break;
+		case "other Oceania":
+			return "Other Oceania";
+			break;
+		case "other Latin America":
+			return "Other Latin America";
 			break;
 		default:
 			return str;
@@ -4947,7 +4971,43 @@ function buildSankey() {
 	return this;
 }
 
-var color$1 = d3.scaleOrdinal(d3.schemeCategory10);
+function color$1(str) {
+	switch (str) {
+		case "North America":
+			return "#a78bc0";
+			break;
+		case "Africa":
+			return "#f5d8b0";
+			break;
+		case "Europe":
+			return "#003c6f";
+			break;
+		case "Former Soviet Union":
+			return "#96d6f7";
+			break;
+		case "West Asia":
+			return "#eb5e50";
+			break;
+		case "South Asia":
+			return "#e40424";
+			break;
+		case "East Asia":
+			return "#ad1e54";
+			break;
+		case "Southeast Asia":
+			return "#540636";
+			break;
+		case "Latin America":
+			return "#cdb5d8";
+			break;
+		case "Oceania":
+			return "#2dbad7";
+			break;
+		default:
+			return "#CCCCCC";
+
+	}
+}
 
 function buildDefs() {
 	var _this = this;
@@ -4957,7 +5017,7 @@ function buildDefs() {
 	this.origins.forEach(function (elem_o, index_o, array_o) {
 		_this.destins.forEach(function (elem_d, index_d, array_d) {
 
-			gradient = _this.svg_g.append("svg:defs").append("svg:linearGradient").attr("id", elem_o + "-" + elem_d).attr("gradientUnits", "userSpaceOnUse");
+			gradient = _this.svg_g.append("svg:defs").append("svg:linearGradient").attr("id", shortName(elem_o).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(elem_d).toLowerCase().replace(/\s+/g, '-')).attr("gradientUnits", "userSpaceOnUse");
 
 			gradient.append("svg:stop").attr("offset", "30%").attr("stop-color", color$1(shortName(elem_o))).attr("stop-opacity", 1);
 
@@ -5002,7 +5062,7 @@ function buildLinks() {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
 		if (_this.selectedCountry.length > 0) {
-			return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+			return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 		} else {
 			return "#000";
 		}
@@ -5027,7 +5087,7 @@ function buildLinks() {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
 		if (_this.selectedCountry.length > 0) {
-			return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+			return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 		} else {
 			return "#000";
 		}
@@ -5159,7 +5219,6 @@ function buildTooltip(d, node) {
 }
 
 function removeSvg() {
-	console.log("We're removing the svg");
 	this.svg.remove();
 
 	// delete this.svg;

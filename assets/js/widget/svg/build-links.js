@@ -38,7 +38,7 @@ function buildLinks() {
 		})
 		.style("stroke", (d) => {
 			if (this.selectedCountry.length > 0) {
-				return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+				return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 			} else {
 				return "#000";
 			}
@@ -73,7 +73,7 @@ function buildLinks() {
 		})
 		.style("stroke", (d) => {
 			if (this.selectedCountry.length > 0) {
-				return "url(#" + d.originregion_name + "-" + d.destinationregion_name + ")";
+				return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 			} else {
 				return "#000";
 			}

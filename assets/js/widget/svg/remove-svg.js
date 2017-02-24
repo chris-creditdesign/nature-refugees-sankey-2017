@@ -1,7 +1,6 @@
 import d3 from "../../d3-bundle";
 
 function removeSvg() {
-	console.log("We're removing the svg");
 	this.svg.remove();
 
 	// delete this.svg;

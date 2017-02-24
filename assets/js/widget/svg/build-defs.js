@@ -11,7 +11,7 @@ function buildDefs() {
 
 				gradient = this.svg_g.append("svg:defs")
 					.append("svg:linearGradient")
-						.attr("id", elem_o + "-" + elem_d)
+						.attr("id", shortName(elem_o).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(elem_d).toLowerCase().replace(/\s+/g, '-'))
 						.attr("gradientUnits", "userSpaceOnUse");
 
 				gradient.append("svg:stop")

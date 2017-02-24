@@ -31,6 +31,8 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 - Remove titles
 - Simplify the links opacity on hover logic
 - Add button to switch between continents and countries 
+- Check page width on resize
+- Add credit
 
 Created using the [d3-sankey](https://github.com/d3/d3-sankey) plugin for D3 4.0.
 
