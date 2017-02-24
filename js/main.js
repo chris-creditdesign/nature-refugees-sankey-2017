@@ -5064,10 +5064,10 @@ function buildLinks() {
 		if (_this.selectedCountry.length > 0) {
 			return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 		} else {
-			return "#000";
+			return "#fff";
 		}
 	}).attr("opacity", function () {
-		return _this.selectedCountry.length > 0 ? 0.6 : 0.1;
+		return _this.selectedCountry.length > 0 ? 0.6 : 0.15;
 	}).on("mouseover", function (d) {
 		d3.select(this).attr("opacity", function () {
 			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
@@ -5076,7 +5076,7 @@ function buildLinks() {
 		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
 		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 0.6 : 0.1;
+			return that.selectedCountry.length > 0 ? 0.6 : 0.15;
 		});
 
 		d3.select("#widget-tooltip").classed("hidden", true);
@@ -5089,10 +5089,10 @@ function buildLinks() {
 		if (_this.selectedCountry.length > 0) {
 			return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 		} else {
-			return "#000";
+			return "#fff";
 		}
 	}).attr("opacity", function () {
-		return _this.selectedCountry.length > 0 ? 0.6 : 0.1;
+		return _this.selectedCountry.length > 0 ? 0.6 : 0.15;
 	}).on("mouseover", function (d) {
 		d3.select(this).attr("opacity", function () {
 			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
@@ -5101,7 +5101,7 @@ function buildLinks() {
 		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
 		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 0.6 : 0.1;
+			return that.selectedCountry.length > 0 ? 0.6 : 0.15;
 		});
 
 		d3.select("#widget-tooltip").classed("hidden", true);
