@@ -40,11 +40,11 @@ function buildLinks() {
 			if (this.selectedCountry.length > 0) {
 				return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 			} else {
-				return "#000";
+				return "#fff";
 			}
 		})
 		.attr("opacity", () => {
-			return this.selectedCountry.length > 0 ? 0.6 : 0.1;
+			return this.selectedCountry.length > 0 ? 0.6 : 0.15;
 		})
 		.on("mouseover", function(d) {
 			d3.select(this)
@@ -57,7 +57,7 @@ function buildLinks() {
 		.on("mouseout", function() {
 			d3.select(this)
 				.attr("opacity", () => {
-					return that.selectedCountry.length > 0 ? 0.6 : 0.1;
+					return that.selectedCountry.length > 0 ? 0.6 : 0.15;
 				});
 
 			d3.select("#widget-tooltip")
@@ -75,11 +75,11 @@ function buildLinks() {
 			if (this.selectedCountry.length > 0) {
 				return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
 			} else {
-				return "#000";
+				return "#fff";
 			}
 		})
 		.attr("opacity", () => {
-			return this.selectedCountry.length > 0 ? 0.6 : 0.1;
+			return this.selectedCountry.length > 0 ? 0.6 : 0.15;
 		})
 		.on("mouseover", function(d) {
 			d3.select(this)
@@ -92,7 +92,7 @@ function buildLinks() {
 		.on("mouseout", function() {
 			d3.select(this)
 				.attr("opacity", () => {
-					return that.selectedCountry.length > 0 ? 0.6 : 0.1;
+					return that.selectedCountry.length > 0 ? 0.6 : 0.15;
 				});
 
 			d3.select("#widget-tooltip")

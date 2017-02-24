@@ -8,6 +8,8 @@
   width: 100%;
   position: relative;
   border: 1px solid #c8c7cf;
+  background-color: #708494;
+  color: #fff;
 }
 
 .outerwrapper h1, .outerwrapper h2, .outerwrapper h3, .outerwrapper p, .outerwrapper ul {
@@ -16,6 +18,7 @@
   -webkit-hyphens: auto;
       -ms-hyphens: auto;
           hyphens: auto;
+  color: #fff;
 }
 
 .outerwrapper .key span {
@@ -67,6 +70,7 @@
   font-size: 0.9em;
   pointer-events: none;
   font-family: arial,helvetica,clean,sans-serif;
+  fill: #fff;
 }
 
 .link {
