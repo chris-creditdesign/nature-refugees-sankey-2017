@@ -4312,7 +4312,7 @@ var sankey = function () {
             i;
 
         // Push any overlapping nodes down.
-        nodes.sort(ascendingDepth);
+        nodes.sort(ascendingDepth); // Edited by chris
         for (i = 0; i < n; ++i) {
           node = nodes[i];
           dy = y0 - node.y;
@@ -4851,6 +4851,43 @@ function shortName(str) {
 	return newName;
 }
 
+function correctNames(str) {
+	switch (str) {
+		case "FmrUSSR":
+			return "Former Soviet Union";
+			break;
+		case "WestAsia":
+			return "West Asia";
+			break;
+		case "SouthAsia":
+			return "South Asia";
+			break;
+		case "East Asia":
+			return "East Asia";
+			break;
+		case "SoutheastAsia":
+			return "Southeast Asia";
+			break;
+		case "LatinAmerica":
+			return "Latin America";
+			break;
+		case "Ivory Coast":
+			return "Côte d'Ivoire";
+			break;
+		case "DR Congo":
+			return "Democratic Republic of the Congo";
+			break;
+		case "other Fmr USSR":
+			return "Other former Soviet Union";
+			break;
+		case "Palestina":
+			return "Palestinian territories";
+			break;
+		default:
+			return str;
+	}
+}
+
 function buildData() {
 	var _this = this;
 
@@ -4861,24 +4898,24 @@ function buildData() {
 
 	this.data.forEach(function (elem, index, array) {
 		if (parseInt(elem.countryflow_2016, 10) > 0) {
-			nodes.push(elem.origin_name + "-o");
-			nodes.push(elem.destination_name + "-d");
+			nodes.push(correctNames(elem.origin_name) + "-o");
+			nodes.push(correctNames(elem.destination_name) + "-d");
 
 			_this.graph.links.push({
-				"source": elem.origin_name + "-o",
-				"target": elem.destination_name + "-d",
+				"source": correctNames(elem.origin_name) + "-o",
+				"target": correctNames(elem.destination_name) + "-d",
 
-				"origin_name": elem.origin_name + "-o",
-				"destination_name": elem.destination_name + "-d",
+				"origin_name": correctNames(elem.origin_name) + "-o",
+				"destination_name": correctNames(elem.destination_name) + "-d",
 
-				"originregion_name": elem.originregion_name + "-o",
-				"destinationregion_name": elem.destinationregion_name + "-d",
+				"originregion_name": correctNames(elem.originregion_name) + "-o",
+				"destinationregion_name": correctNames(elem.destinationregion_name) + "-d",
 
 				"value": parseInt(elem.countryflow_2016, 10)
 			});
 
-			_this.origins.push(elem.originregion_name + "-o");
-			_this.destins.push(elem.destinationregion_name + "-d");
+			_this.origins.push(correctNames(elem.originregion_name) + "-o");
+			_this.destins.push(correctNames(elem.destinationregion_name) + "-d");
 		}
 	});
 
