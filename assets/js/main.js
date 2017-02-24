@@ -21,7 +21,8 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 		var myWidget = new Widget({
 			target: "#sankey-chart",
 			width: d3.select("#content").node().clientWidth,
-			data: data
+			data: data,
+			margin: {'top': 0, 'left': 10, 'bottom': 10, 'right': 10}
 		});
 
 		myWidget.buildSvg()

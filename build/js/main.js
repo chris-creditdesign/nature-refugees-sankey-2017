@@ -115,7 +115,6 @@ var formatTypes = {
   }
 };
 
-// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -4143,7 +4142,7 @@ var sankey = function () {
   };
 
   sankey.link = function () {
-    var curvature = .5;
+    var curvature = 0.5;
 
     function link(d) {
       var x0 = d.source.x + d.source.dx,
@@ -4972,8 +4971,6 @@ function buildSankey() {
 	return this;
 }
 
-// var color = d3.scaleOrdinal(d3.schemeCategory10);
-
 function color$1(str) {
 	switch (str) {
 		case "North America":
@@ -5283,7 +5280,8 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 		var myWidget = new Widget({
 			target: "#sankey-chart",
 			width: d3.select("#content").node().clientWidth,
-			data: data
+			data: data,
+			margin: { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 }
 		});
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
