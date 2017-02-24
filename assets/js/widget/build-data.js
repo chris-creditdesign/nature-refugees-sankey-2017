@@ -1,6 +1,7 @@
 import d3 from "../d3-bundle";
 import onlyUnique from "./helpers/only-unique";
 import shortName from "./helpers/short-name";
+import correctNames from "./helpers/correct-names";
 
 function buildData() {
 	
@@ -11,25 +12,25 @@ function buildData() {
 
 	this.data.forEach((elem, index, array) => {
 		if (parseInt(elem.countryflow_2016, 10) > 0) {
-			nodes.push(elem.origin_name + "-o" );
-			nodes.push(elem.destination_name + "-d");
+			nodes.push(correctNames(elem.origin_name) + "-o" );
+			nodes.push(correctNames(elem.destination_name) + "-d");
 			
 			this.graph.links.push({
-				"source": (elem.origin_name + "-o"), 
-				"target": (elem.destination_name + "-d"), 
+				"source": (correctNames(elem.origin_name) + "-o"), 
+				"target": (correctNames(elem.destination_name) + "-d"), 
 				
 
-				"origin_name": (elem.origin_name + "-o"),
-				"destination_name": (elem.destination_name + "-d"),
+				"origin_name": (correctNames(elem.origin_name) + "-o"),
+				"destination_name": (correctNames(elem.destination_name) + "-d"),
 
-				"originregion_name": (elem.originregion_name + "-o"), 
-				"destinationregion_name": (elem.destinationregion_name + "-d"),
+				"originregion_name": (correctNames(elem.originregion_name) + "-o"), 
+				"destinationregion_name": (correctNames(elem.destinationregion_name) + "-d"),
 
 				"value": parseInt(elem.countryflow_2016, 10)
 			});
 
-			this.origins.push((elem.originregion_name + "-o"));
-			this.destins.push((elem.destinationregion_name + "-d"));
+			this.origins.push((correctNames(elem.originregion_name) + "-o"));
+			this.destins.push((correctNames(elem.destinationregion_name) + "-d"));
 		}
 	});
 

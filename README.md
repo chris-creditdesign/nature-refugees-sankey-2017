@@ -26,6 +26,7 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 - Add drop down to choose country
 - Add transitions?
 - Add print colours
+- Proper colour scale
 - Add correct country and continent names
 - Remove titles
 - Simplify the links opacity on hover logic
