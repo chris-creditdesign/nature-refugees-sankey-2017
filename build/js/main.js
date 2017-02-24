@@ -115,6 +115,7 @@ var formatTypes = {
   }
 };
 
+// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -4971,6 +4972,8 @@ function buildSankey() {
 	return this;
 }
 
+// var color = d3.scaleOrdinal(d3.schemeCategory10);
+
 function color$1(str) {
 	switch (str) {
 		case "North America":
@@ -5267,8 +5270,13 @@ Widget.prototype.removeSvg = removeSvg;
 
 d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 	if (error) {
-		console.log("error: " + error);
+		d3.select("#outerwrapper").style("display", "none");
+
+		d3.select("#status-message").style("display", "block");
 	} else {
+		d3.select("#outerwrapper").style("display", "block");
+
+		d3.select("#status-message").style("display", "none");
 
 		var didResize = false;
 
