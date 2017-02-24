@@ -20,7 +20,7 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 
 		var myWidget = new Widget({
 			target: "#sankey-chart",
-			width: d3.select("#content").node().clientWidth,
+			width: d3.select(".section").node().clientWidth,
 			data: data
 		});
 
@@ -42,7 +42,7 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 				if (didResize) {
 					myWidget.removeSvg()
 						.updateProps({
-							width: d3.select("#content").node().clientWidth
+							width: d3.select(".section").node().clientWidth
 						})
 						.buildSvg()
 						.buildSankey()
