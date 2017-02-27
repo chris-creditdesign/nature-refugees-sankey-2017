@@ -1,7 +1,14 @@
 import d3 from "./d3-bundle";
 import Widget from "./widget/widget";
 
-d3.csv("./data/refugee-data-edit.csv", function(error, data) {
+var localUrl = "./data/refugee-data-edit.csv";
+var polopolyUrl = "http://www.nature.com/widget_assets_polopoly/refugee-data-edit.csv";
+
+function getWidth() {
+	return document.getElementById("content").getBoundingClientRect().width;
+}
+
+d3.csv(localUrl, function(error, data) {
 	if (error) {
 		d3.select("#outerwrapper")
 			.style("display", "none");
@@ -17,12 +24,12 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 			.style("display", "none");
 		
 		var didResize = false;
+		var width = getWidth();
 
 		var myWidget = new Widget({
 			target: "#sankey-chart",
-			width: d3.select("#content").node().clientWidth,
-			data: data,
-			margin: {'top': 0, 'left': 10, 'bottom': 10, 'right': 10}
+			width: width,
+			data: data
 		});
 
 		myWidget.buildSvg()
@@ -34,6 +41,12 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 			.buildText()
 			.buildKey();
 
+		if (getWidth() !== width) {
+			width = getWidth();
+			myWidget.resize(width);
+		}
+
+
 		d3.select(window).on("resize", function() {
 
 			didResize = true;
@@ -41,17 +54,8 @@ d3.csv("./data/refugee-data-edit.csv", function(error, data) {
 			/* Throttle the resize */
 			setTimeout(function () {
 				if (didResize) {
-					myWidget.removeSvg()
-						.updateProps({
-							width: d3.select("#content").node().clientWidth
-						})
-						.buildSvg()
-						.buildSankey()
-						.buildDefs()
-						.buildLinks()
-						.buildNodes()
-						.buildText();
-
+					width = getWidth();
+					myWidget.resize(width);
 					didResize = false;
 				}
 			}, 60);

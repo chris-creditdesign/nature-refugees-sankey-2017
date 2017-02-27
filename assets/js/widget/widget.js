@@ -8,6 +8,7 @@ import buildText from "./svg/build-text";
 import updateAll from "./update-all";
 import buildKey from "./ui/build-key";
 import buildTooltip from "./ui/build-tooltip";
+import resize from "./resize";
 import removeSvg from "./svg/remove-svg";
 
 function Widget(data) {
@@ -44,6 +45,7 @@ Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 
 export default Widget;
