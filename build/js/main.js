@@ -5270,7 +5270,12 @@ Widget.prototype.buildTooltip = buildTooltip;
 Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 
-d3.csv("./data/refugee-data-edit.csv", function (error, data) {
+var localUrl = "./data/refugee-data-edit.csv";
+function getWidth() {
+	return document.getElementById("content").getBoundingClientRect().width;
+}
+
+d3.csv(localUrl, function (error, data) {
 	if (error) {
 		d3.select("#outerwrapper").style("display", "none");
 
@@ -5281,7 +5286,7 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 		d3.select("#status-message").style("display", "none");
 
 		var didResize = false;
-		var width = document.getElementsByClassName("section")[0].getBoundingClientRect().width;
+		var width = getWidth();
 
 		var myWidget = new Widget({
 			target: "#sankey-chart",
@@ -5291,8 +5296,8 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
 
-		if (document.getElementsByClassName("section")[0].getBoundingClientRect().width !== width) {
-			width = document.getElementsByClassName("section")[0].getBoundingClientRect().width;
+		if (getWidth() !== width) {
+			width = getWidth();
 			myWidget.resize(width);
 		}
 
@@ -5303,7 +5308,7 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 			/* Throttle the resize */
 			setTimeout(function () {
 				if (didResize) {
-					width = document.getElementsByClassName("section")[0].getBoundingClientRect().width;
+					width = getWidth();
 					myWidget.resize(width);
 					didResize = false;
 				}
