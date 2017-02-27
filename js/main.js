@@ -115,6 +115,7 @@ var formatTypes = {
   }
 };
 
+// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -4971,6 +4972,8 @@ function buildSankey() {
 	return this;
 }
 
+// var color = d3.scaleOrdinal(d3.schemeCategory10);
+
 function color$1(str) {
 	switch (str) {
 		case "North America":
@@ -5193,7 +5196,6 @@ function buildTooltip(d, node) {
 			return node.getBBox().y + node.getBBox().height / 2 + "px";
 		}
 	}).style("left", function () {
-		// console.log(d3.select(this).node().getBoundingClientRect().width);
 
 		if (data.name) {
 			// It is a node
@@ -5218,12 +5220,17 @@ function buildTooltip(d, node) {
 	return this;
 }
 
+function resize(width) {
+	this.removeSvg().updateProps({
+		width: width
+	}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
+
+	return this;
+}
+
 function removeSvg() {
 	this.svg.remove();
 
-	// delete this.svg;
-	// delete this.nodes;
-	// delete this.links;
 	delete this.g_links;
 
 	return this;
@@ -5263,9 +5270,15 @@ Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 
-d3.csv("./data/refugee-data-edit.csv", function (error, data) {
+var localUrl = "./data/refugee-data-edit.csv";
+function getWidth() {
+	return document.getElementById("content").getBoundingClientRect().width;
+}
+
+d3.csv(localUrl, function (error, data) {
 	if (error) {
 		d3.select("#outerwrapper").style("display", "none");
 
@@ -5276,15 +5289,20 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 		d3.select("#status-message").style("display", "none");
 
 		var didResize = false;
+		var width = getWidth();
 
 		var myWidget = new Widget({
 			target: "#sankey-chart",
-			width: d3.select("#content").node().clientWidth,
-			data: data,
-			margin: { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 }
+			width: width,
+			data: data
 		});
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
+
+		if (getWidth() !== width) {
+			width = getWidth();
+			myWidget.resize(width);
+		}
 
 		d3.select(window).on("resize", function () {
 
@@ -5293,10 +5311,8 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 			/* Throttle the resize */
 			setTimeout(function () {
 				if (didResize) {
-					myWidget.removeSvg().updateProps({
-						width: d3.select("#content").node().clientWidth
-					}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
-
+					width = getWidth();
+					myWidget.resize(width);
 					didResize = false;
 				}
 			}, 60);
