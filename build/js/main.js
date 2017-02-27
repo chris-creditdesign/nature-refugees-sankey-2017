@@ -5193,7 +5193,6 @@ function buildTooltip(d, node) {
 			return node.getBBox().y + node.getBBox().height / 2 + "px";
 		}
 	}).style("left", function () {
-		// console.log(d3.select(this).node().getBoundingClientRect().width);
 
 		if (data.name) {
 			// It is a node
@@ -5218,12 +5217,17 @@ function buildTooltip(d, node) {
 	return this;
 }
 
+function resize(width) {
+	this.removeSvg().updateProps({
+		width: width
+	}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
+
+	return this;
+}
+
 function removeSvg() {
 	this.svg.remove();
 
-	// delete this.svg;
-	// delete this.nodes;
-	// delete this.links;
 	delete this.g_links;
 
 	return this;
@@ -5263,6 +5267,7 @@ Widget.prototype.buildText = buildText;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 
 d3.csv("./data/refugee-data-edit.csv", function (error, data) {
@@ -5276,14 +5281,20 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 		d3.select("#status-message").style("display", "none");
 
 		var didResize = false;
+		var width = document.getElementsByClassName("section")[0].getBoundingClientRect().width;
 
 		var myWidget = new Widget({
 			target: "#sankey-chart",
-			width: d3.select(".section").node().clientWidth,
+			width: width,
 			data: data
 		});
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
+
+		if (document.getElementsByClassName("section")[0].getBoundingClientRect().width !== width) {
+			width = document.getElementsByClassName("section")[0].getBoundingClientRect().width;
+			myWidget.resize(width);
+		}
 
 		d3.select(window).on("resize", function () {
 
@@ -5292,10 +5303,8 @@ d3.csv("./data/refugee-data-edit.csv", function (error, data) {
 			/* Throttle the resize */
 			setTimeout(function () {
 				if (didResize) {
-					myWidget.removeSvg().updateProps({
-						width: d3.select(".section").node().clientWidth
-					}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
-
+					width = document.getElementsByClassName("section")[0].getBoundingClientRect().width;
+					myWidget.resize(width);
 					didResize = false;
 				}
 			}, 60);

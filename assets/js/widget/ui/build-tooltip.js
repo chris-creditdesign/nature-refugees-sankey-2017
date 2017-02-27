@@ -16,7 +16,6 @@ function buildTooltip(d, node) {
 			}
 		})
 		.style("left", function () {
-			// console.log(d3.select(this).node().getBoundingClientRect().width);
 			
 			if (data.name) {
 				// It is a node
