@@ -33,6 +33,16 @@
 		}
 	}
 
+	.widget-checkbox-label {
+		margin: 10px 0 0 10px;
+		padding: 5px 10px;
+		color: #666;
+		background-color: #ddd;
+		display: inline-block;
+		border-radius: 5px;
+		cursor: pointer;
+	}
+
 	.chart {
 		position: relative;
 		margin-top: 20px;
@@ -49,7 +59,6 @@
 		font-size: 0.8em;
 		line-height: 1.4em;
 		opacity: 1;
-		-webkit-transition: opacity 0.2s ease;
 		transition: opacity 0.2s ease;
 
 		p {
@@ -77,7 +86,19 @@
 
 	.link {
 		fill: none;
-		stroke: #000;
+		opacity: 0.2;
+	}
+
+	.link:hover {
+		opacity: 0.5;
+	}
+
+	.link.gradient {
+		opacity: 0.5;
+	}
+
+	.link.gradient:hover {
+		opacity: 0.8;
 	}
 }
 

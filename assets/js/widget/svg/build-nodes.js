@@ -44,6 +44,8 @@ function buildNodes() {
 				this.selectedCountry = "";
 			}
 
+			this.topTenCheckbox.property("checked", false);
+
 			this.updateAll();
 		});
 

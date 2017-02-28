@@ -10,6 +10,10 @@ function buildData() {
 	var nodes = [];
 	var uniqueNames;
 
+	function compareValue (a, b) {
+		return b.value - a.value;
+	}
+
 	this.data.forEach((elem, index, array) => {
 		if (parseInt(elem.countryflow_2016, 10) > 0) {
 			nodes.push(correctNames(elem.origin_name) + "-o" );
@@ -41,9 +45,13 @@ function buildData() {
 	this.continents = this.origins.concat(this.destins).map(shortName).filter(onlyUnique);
 	
 	this.graph.links.forEach((elem, index, array) => {
-		this.graph.links[index].source = uniqueNames.indexOf(this.graph.links[index].source);
-		this.graph.links[index].target = uniqueNames.indexOf(this.graph.links[index].target);
+		elem.source = uniqueNames.indexOf(elem.source);
+		elem.target = uniqueNames.indexOf(elem.target);
+		elem.id = `${elem.origin_name} to ${elem.destination_name}`;
 	});
+
+	// Create an array with the ids of the top ten links
+	this.topLinks = this.graph.links.sort(compareValue).slice(0,10).map((x) => x.id );
 	
 	uniqueNames.forEach((elem, index, array) => {
 		this.graph.nodes.push({"name": elem });

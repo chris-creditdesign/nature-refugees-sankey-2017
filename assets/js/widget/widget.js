@@ -9,6 +9,7 @@ import buildLabels from "./svg/build-labels";
 import updateAll from "./update-all";
 import buildKey from "./ui/build-key";
 import buildTooltip from "./ui/build-tooltip";
+import buildTopTenSelector from "./ui/build-top-ten-selector";
 import resize from "./resize";
 import removeSvg from "./svg/remove-svg";
 
@@ -21,6 +22,7 @@ function Widget(data) {
 	this.data = data.data;
 	this.target = data.target ? data.target : "body";
 	this.selectedCountry = "";
+	this.showTopTen = false;
 	this.origins = [];
 	this.destins = [];
 	this.continents = [];
@@ -49,6 +51,7 @@ Widget.prototype.buildLabels = buildLabels;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.buildTopTenSelector = buildTopTenSelector;
 Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 

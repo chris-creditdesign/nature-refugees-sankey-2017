@@ -22,7 +22,7 @@ function buildText() {
 		.filter(function(d) {
 			// Only label countries with more than
 			// 25,000 people
-			return d.value < 25000;
+			return d.value < 40000;
 		})
 		.remove();
 
