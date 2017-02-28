@@ -5313,16 +5313,17 @@ function Widget(data) {
 	this.origins = [];
 	this.destins = [];
 	this.continents = [];
-	this.groupByContinents = data.groupByContinents;
+	this.groupByContinents = data.hasOwnProperty("groupByContinents") ? data.groupByContinents : false;
 }
 
 Widget.prototype.updateProps = function (data) {
+	console.log(this.groupByContinents);
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
 	this.margin = data.margin ? data.margin : { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 };
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
-	this.groupByContinents = data.groupByContinents;
+	this.groupByContinents = data.hasOwnProperty("groupByContinents") ? data.groupByContinents : this.groupByContinents;
 
 	return this;
 };
@@ -5362,7 +5363,8 @@ d3.csv(localUrl, function (error, data) {
 			target: "#sankey-chart",
 			width: width,
 			data: data,
-			groupByContinents: true
+			margin: { 'top': 20, 'left': 10, 'bottom': 10, 'right': 10 },
+			groupByContinents: false
 		});
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
