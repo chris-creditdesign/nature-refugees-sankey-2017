@@ -115,7 +115,6 @@ var formatTypes = {
   }
 };
 
-// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -4090,13 +4089,20 @@ var select = function (selector) {
     return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
 };
 
+function shortName(str) {
+	var newName = str.substr(0, str.length - 2);
+	return newName;
+}
+
 var sankey = function () {
-  var sankey = {},
-      nodeWidth = 24,
-      nodePadding = 8,
-      size = [1, 1],
-      nodes = [],
-      links = [];
+  var sankey = {};
+  var nodeWidth = 24;
+  var nodePadding = 8;
+  var size = [1, 1];
+  var nodes = [];
+  var links = [];
+  var groups = [];
+  var groupByGroups = true;
 
   sankey.nodeWidth = function (_) {
     if (!arguments.length) return nodeWidth;
@@ -4125,6 +4131,18 @@ var sankey = function () {
   sankey.size = function (_) {
     if (!arguments.length) return size;
     size = _;
+    return sankey;
+  };
+
+  sankey.groups = function (_) {
+    if (!arguments.length) return groups;
+    groups = _;
+    return sankey;
+  };
+
+  sankey.groupByGroups = function (_) {
+    if (!arguments.length) return groupByGroups;
+    groupByGroups = _;
     return sankey;
   };
 
@@ -4247,15 +4265,30 @@ var sankey = function () {
       return d.values;
     });
 
+    nodesByBreadth.forEach(function (nodes) {
+      nodes.forEach(function (node) {
+        if (node.name.slice(-2) === "-d") {
+          node.continent = shortName(node.targetLinks[0].destinationregion_name);
+        } else {
+          node.continent = shortName(node.sourceLinks[0].originregion_name);
+        }
+      });
+    });
+
     //
     initializeNodeDepth();
+
     resolveCollisions();
+
+    // Code for least collisions
+    /*
     for (var alpha = 1; iterations > 0; --iterations) {
       relaxRightToLeft(alpha *= .99);
       resolveCollisions();
       relaxLeftToRight(alpha);
       resolveCollisions();
     }
+    */
 
     function initializeNodeDepth() {
       var ky = min(nodesByBreadth, function (nodes) {
@@ -4263,6 +4296,35 @@ var sankey = function () {
       });
 
       nodesByBreadth.forEach(function (nodes) {
+
+        if (groupByGroups && groups.length) {
+          (function () {
+            var continentArray = [];
+
+            groups.forEach(function () {
+              return continentArray.push([]);
+            });
+
+            nodes.sort(ascendingContinent);
+
+            nodes.forEach(function (elem, index, array) {
+              continentArray[groups.indexOf(elem.continent)].push(elem);
+            });
+
+            nodes = [];
+
+            continentArray.forEach(function (elem, index, array) {
+              elem.sort(descendingValue);
+
+              elem.forEach(function (country) {
+                nodes.push(country);
+              });
+            });
+          })();
+        } else {
+          nodes.sort(descendingValue);
+        }
+
         nodes.forEach(function (node, i) {
           node.y = i;
           node.dy = node.value * ky;
@@ -4313,7 +4375,7 @@ var sankey = function () {
             i;
 
         // Push any overlapping nodes down.
-        nodes.sort(ascendingDepth); // Edited by chris
+        nodes.sort(ascendingDepth);
         for (i = 0; i < n; ++i) {
           node = nodes[i];
           dy = y0 - node.y;
@@ -4339,6 +4401,18 @@ var sankey = function () {
 
     function ascendingDepth(a, b) {
       return a.y - b.y;
+    }
+
+    function ascendingValue(a, b) {
+      return a.value - b.value;
+    }
+
+    function descendingValue(a, b) {
+      return b.value - a.value;
+    }
+
+    function ascendingContinent(a, b) {
+      return groups.indexOf(a.continent) - groups.indexOf(b.continent);
     }
   }
 
@@ -4847,11 +4921,6 @@ function onlyUnique(elem, index, array) {
 	return array.indexOf(elem) === index;
 }
 
-function shortName(str) {
-	var newName = str.substr(0, str.length - 2);
-	return newName;
-}
-
 function correctNames(str) {
 	switch (str) {
 		case "NorthAmerica":
@@ -4963,16 +5032,12 @@ function buildData() {
 }
 
 function buildSankey() {
-	this.sankey = d3.sankey().nodeWidth(30).nodePadding(5).size([this.width, this.height]);
-
-	this.sankey.nodes(this.graph.nodes).links(this.graph.links).layout(32);
+	this.sankey = d3.sankey().nodeWidth(30).nodePadding(5).size([this.width, this.height]).groups(this.continents).groupByGroups(this.groupByContinents).nodes(this.graph.nodes).links(this.graph.links).layout(32);
 
 	this.path = this.sankey.link();
 
 	return this;
 }
-
-// var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 function color$1(str) {
 	switch (str) {
@@ -5248,6 +5313,7 @@ function Widget(data) {
 	this.origins = [];
 	this.destins = [];
 	this.continents = [];
+	this.groupByContinents = data.groupByContinents;
 }
 
 Widget.prototype.updateProps = function (data) {
@@ -5256,6 +5322,7 @@ Widget.prototype.updateProps = function (data) {
 	this.margin = data.margin ? data.margin : { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 };
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
+	this.groupByContinents = data.groupByContinents;
 
 	return this;
 };
@@ -5294,7 +5361,8 @@ d3.csv(localUrl, function (error, data) {
 		var myWidget = new Widget({
 			target: "#sankey-chart",
 			width: width,
-			data: data
+			data: data,
+			groupByContinents: true
 		});
 
 		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
