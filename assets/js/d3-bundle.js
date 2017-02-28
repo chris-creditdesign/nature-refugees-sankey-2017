@@ -5,6 +5,7 @@ import sankey from "./lib/sankey";
 import {csv} from "d3-request";
 import {rgb} from "d3-color";
 import {nest} from "d3-collection";
+import {symbol, symbolTriangle} from "d3-shape";
 
 export default {
 	format: format,
@@ -14,5 +15,7 @@ export default {
 	sankey: sankey,
 	rgb: rgb,
 	csv: csv,
-	nest: nest
+	nest: nest,
+	symbol: symbol,
+	symbolTriangle: symbolTriangle
 };

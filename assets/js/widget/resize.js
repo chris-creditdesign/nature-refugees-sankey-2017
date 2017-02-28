@@ -8,7 +8,8 @@ function resize(width) {
 		.buildDefs()
 		.buildLinks()
 		.buildNodes()
-		.buildText();
+		.buildText()
+		.buildLabels();
 
 	return this;
 }

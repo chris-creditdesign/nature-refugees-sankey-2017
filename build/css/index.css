@@ -63,19 +63,19 @@
   pointer-events: none;
 }
 
-.node rect {
+.outerwrapper .node rect {
   fill-opacity: .9;
   shape-rendering: crispEdges;
 }
 
-.node text {
+.outerwrapper .node text, .outerwrapper text {
   font-size: 0.9em;
   pointer-events: none;
   font-family: arial,helvetica,clean,sans-serif;
   fill: #fff;
 }
 
-.link {
+.outerwrapper .link {
   fill: none;
   stroke: #000;
 }

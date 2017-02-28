@@ -5,6 +5,7 @@ import buildDefs from "./svg/build-defs";
 import buildLinks from "./svg/build-links";
 import buildNodes from "./svg/build-nodes";
 import buildText from "./svg/build-text";
+import buildLabels from "./svg/build-labels";
 import updateAll from "./update-all";
 import buildKey from "./ui/build-key";
 import buildTooltip from "./ui/build-tooltip";
@@ -14,7 +15,7 @@ import removeSvg from "./svg/remove-svg";
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
-	this.margin = data.margin ? data.margin : {'top': 0, 'left': 10, 'bottom': 10, 'right': 10};
+	this.margin = data.margin ? data.margin : {'top': 20, 'left': 10, 'bottom': 10, 'right': 10};
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 	this.data = data.data;
@@ -27,10 +28,9 @@ function Widget(data) {
 }
 
 Widget.prototype.updateProps = function(data) {
-	console.log(this.groupByContinents);
-	this.totalWidth = data.width ? data.width : 630;
-	this.totalHeight = data.height ? data.height : 2500;
-	this.margin = data.margin ? data.margin : {'top': 0, 'left': 10, 'bottom': 10, 'right': 10};
+	this.totalWidth = data.width ? data.width : this.totalWidth;
+	this.totalHeight = data.height ? data.height : this.totalHeight;
+	this.margin = data.margin ? data.margin : this.margin;
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 	this.groupByContinents = data.hasOwnProperty("groupByContinents") ? data.groupByContinents : this.groupByContinents;
@@ -45,6 +45,7 @@ Widget.prototype.buildDefs = buildDefs;
 Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
+Widget.prototype.buildLabels = buildLabels;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;

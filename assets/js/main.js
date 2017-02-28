@@ -41,6 +41,7 @@ d3.csv(localUrl, function(error, data) {
 			.buildLinks()
 			.buildNodes()
 			.buildText()
+			.buildLabels()
 			.buildKey();
 
 		if (getWidth() !== width) {
