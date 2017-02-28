@@ -20,6 +20,9 @@
       -ms-hyphens: auto;
           hyphens: auto;
   color: #fff;
+  -webkit-hyphens: none;
+      -ms-hyphens: none;
+          hyphens: none;
 }
 
 .outerwrapper .key span {
@@ -65,6 +68,9 @@
 
 .outerwrapper .widget-tooltip p {
   padding: 0;
+  -webkit-hyphens: none;
+      -ms-hyphens: none;
+          hyphens: none;
 }
 
 .outerwrapper .hidden {
