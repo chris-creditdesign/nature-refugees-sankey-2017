@@ -30,7 +30,8 @@ d3.csv(localUrl, function(error, data) {
 			target: "#sankey-chart",
 			width: width,
 			data: data,
-			groupByContinents: true
+			margin: {'top': 20, 'left': 10, 'bottom': 10, 'right': 10},
+			groupByContinents: false
 		});
 
 		myWidget.buildSvg()
