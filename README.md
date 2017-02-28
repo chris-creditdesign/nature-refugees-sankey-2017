@@ -25,7 +25,6 @@ You will need [csvkit](https://csvkit.readthedocs.io/en/749/) and [circular-migr
 - Add continent view
 - Add drop down to choose country
 - Add transitions?
-- Simplify the links opacity on hover logic
 - Add button to switch between continents and countries 
 - Add proper collision detection for country labels
 - Add top ten flows button
