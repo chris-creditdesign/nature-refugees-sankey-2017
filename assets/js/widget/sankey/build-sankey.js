@@ -4,9 +4,10 @@ function buildSankey() {
 	this.sankey = d3.sankey()
 		.nodeWidth(30)
 		.nodePadding(5)
-		.size([this.width, this.height]);
-
-	this.sankey.nodes(this.graph.nodes)
+		.size([this.width, this.height])
+		.groups(this.continents)
+		.groupByGroups(this.groupByContinents)
+		.nodes(this.graph.nodes)
 		.links(this.graph.links)
 		.layout(32);
 

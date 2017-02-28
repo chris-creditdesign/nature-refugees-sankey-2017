@@ -23,6 +23,7 @@ function Widget(data) {
 	this.origins = [];
 	this.destins = [];
 	this.continents = [];
+	this.groupByContinents = data.groupByContinents;
 }
 
 Widget.prototype.updateProps = function(data) {
@@ -31,6 +32,7 @@ Widget.prototype.updateProps = function(data) {
 	this.margin = data.margin ? data.margin : {'top': 0, 'left': 10, 'bottom': 10, 'right': 10};
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
+	this.groupByContinents = data.groupByContinents;
 
 	return this;
 };

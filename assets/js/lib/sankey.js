@@ -2,13 +2,18 @@ import {ascending, min, sum} from "d3-array";
 import {nest} from "d3-collection";
 import {interpolateNumber} from "d3-interpolate";
 
+import shortName from "../widget/helpers/short-name";
+
 export default function() {
-  var sankey = {},
-      nodeWidth = 24,
-      nodePadding = 8,
-      size = [1, 1],
-      nodes = [],
-      links = [];
+  var sankey = {};
+  var nodeWidth = 24;
+  var nodePadding = 8;
+  var size = [1, 1];
+  var nodes = [];
+  var links = [];
+  var groups = [];
+  var groupByGroups = true;
+
 
   sankey.nodeWidth = function(_) {
     if (!arguments.length) return nodeWidth;
@@ -37,6 +42,18 @@ export default function() {
   sankey.size = function(_) {
     if (!arguments.length) return size;
     size = _;
+    return sankey;
+  };
+
+  sankey.groups = function(_) {
+    if (!arguments.length) return groups;
+    groups = _;
+    return sankey;
+  };
+
+  sankey.groupByGroups = function(_) {
+    if (!arguments.length) return groupByGroups;
+    groupByGroups = _;
     return sankey;
   };
 
@@ -165,15 +182,30 @@ export default function() {
         .entries(nodes)
         .map(function(d) { return d.values; });
 
+    nodesByBreadth.forEach(function(nodes) {
+      nodes.forEach(function (node) {
+        if (node.name.slice(-2) === "-d") {
+          node.continent = shortName(node.targetLinks[0].destinationregion_name);
+        } else {
+          node.continent = shortName(node.sourceLinks[0].originregion_name);
+        }
+      });
+    });
+
     //
     initializeNodeDepth();
+
     resolveCollisions();
+
+    // Code for least collisions
+    /*
     for (var alpha = 1; iterations > 0; --iterations) {
       relaxRightToLeft(alpha *= .99);
       resolveCollisions();
       relaxLeftToRight(alpha);
       resolveCollisions();
     }
+    */
 
     function initializeNodeDepth() {
       var ky = min(nodesByBreadth, function(nodes) {
@@ -181,10 +213,36 @@ export default function() {
       });
 
       nodesByBreadth.forEach(function(nodes) {
+        
+        if (groupByGroups && groups.length) {
+          let continentArray = [];
+
+          groups.forEach(() => continentArray.push([]));
+
+          nodes.sort(ascendingContinent);
+
+          nodes.forEach(function(elem, index, array) {
+            continentArray[groups.indexOf(elem.continent)].push(elem);
+          });
+
+          nodes = [];
+
+          continentArray.forEach(function(elem, index, array) {
+            elem.sort(descendingValue);
+            
+            elem.forEach((country) => {
+              nodes.push(country);
+            });
+          });
+        } else {
+          nodes.sort(descendingValue);
+        }
+
         nodes.forEach(function(node, i) {
           node.y = i;
           node.dy = node.value * ky;
         });
+
       });
 
       links.forEach(function(link) {
@@ -231,7 +289,7 @@ export default function() {
             i;
 
         // Push any overlapping nodes down.
-        nodes.sort(ascendingDepth); // Edited by chris
+        nodes.sort(ascendingDepth); 
         for (i = 0; i < n; ++i) {
           node = nodes[i];
           dy = y0 - node.y;
@@ -258,7 +316,20 @@ export default function() {
     function ascendingDepth(a, b) {
       return a.y - b.y;
     }
+
+    function ascendingValue(a, b) {
+      return a.value - b.value;
+    }
+
+    function descendingValue(a, b) {
+      return b.value - a.value;
+    }
+
+    function ascendingContinent (a, b) {
+      return groups.indexOf(a.continent) - groups.indexOf(b.continent);
+    }
   }
+
 
   function computeLinkDepths() {
     nodes.forEach(function(node) {
