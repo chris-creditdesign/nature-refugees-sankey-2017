@@ -6,18 +6,24 @@ import color from "../helpers/color";
 function buildNodes() {
 	var that = this;
 
-	this.nodes = this.svg_g.append("g")
-		.attr("class","nodes")
-		.selectAll(".node")
-		.data(this.graph.nodes)
-		.enter()
-		.append("g")
-		.attr("class", "node")
-		.attr("transform", function(d) {
-			return "translate(" + d.x + "," + d.y + ")";
-		});
+	if (!this.g_nodes) {
+		// Only make the group if it doesn't already exist
+		this.g_nodes = this.svg_g.append("g")
+			.attr("class", "nodes");
+	}
 
-	this.nodes.append("rect")
+	this.nodes = this.g_nodes
+		.selectAll(".node")
+		.data(this.graph.nodes, function(d) {
+			return d.name;
+		});
+	
+	// Enter	
+	this.nodes.enter()
+		.append("rect")
+		.attr("class", "node")
+		.attr("x", (d) => d.x)
+		.attr("y", (d) => d.y )
 		.attr("height", function(d) {
 			return Math.max(1, d.dy);
 		})
@@ -48,6 +54,29 @@ function buildNodes() {
 
 			this.updateAll();
 		});
+
+	// Update
+	this.nodes
+		.transition()
+		.duration(this.duration)
+		.attr("x", (d) => d.x)
+		.attr("y", (d) => d.y )
+		.attr("height", function(d) {
+			return Math.max(1, d.dy);
+		})
+		.attr("width", this.sankey.nodeWidth())
+		.style("fill", (d) => {
+			if (d.x < this.width / 2) {
+				return color(shortName(d.sourceLinks[0].originregion_name));
+			} else {
+				return color(shortName(d.targetLinks[0].destinationregion_name));
+			}
+		});
+
+	// Exit
+	this.nodes
+		.exit()
+		.remove();
 
 	return this;
 }

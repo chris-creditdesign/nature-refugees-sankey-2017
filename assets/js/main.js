@@ -43,7 +43,8 @@ d3.csv(localUrl, function(error, data) {
 			.buildText()
 			.buildLabels()
 			.buildKey()
-			.buildTopTenSelector();
+			.buildTopTenSelector()
+			.buildContinentSelector();
 
 		if (getWidth() !== width) {
 			width = getWidth();

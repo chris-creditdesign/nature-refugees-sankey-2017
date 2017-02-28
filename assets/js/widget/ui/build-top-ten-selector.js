@@ -1,13 +1,10 @@
 import d3 from "../../d3-bundle";
 
 function buildTopTenSelector() {
-	var that = this;
 
-	this.topTenCheckbox = d3.select("#widget-checkbox")
-		.on("change", function() {
-			// that.showTopTen = this.checked;
-
-			that.updateAll();
+	this.topTenCheckbox = d3.select("#widget-top-10-checkbox")
+		.on("change", () => {
+			this.updateAll();
 		});
 
 

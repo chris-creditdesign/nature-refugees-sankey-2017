@@ -6,6 +6,7 @@ import {csv} from "d3-request";
 import {rgb} from "d3-color";
 import {nest} from "d3-collection";
 import {symbol, symbolTriangle} from "d3-shape";
+import {transition} from "d3-transition";
 
 export default {
 	format: format,
@@ -17,5 +18,6 @@ export default {
 	csv: csv,
 	nest: nest,
 	symbol: symbol,
-	symbolTriangle: symbolTriangle
+	symbolTriangle: symbolTriangle,
+	transition: transition
 };

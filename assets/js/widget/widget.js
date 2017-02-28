@@ -1,3 +1,5 @@
+import d3 from "../d3-bundle";
+
 import buildSvg from './svg/build-svg';
 import buildData from "./build-data";
 import buildSankey from "./sankey/build-sankey";
@@ -10,6 +12,7 @@ import updateAll from "./update-all";
 import buildKey from "./ui/build-key";
 import buildTooltip from "./ui/build-tooltip";
 import buildTopTenSelector from "./ui/build-top-ten-selector";
+import buildContinentSelector from "./ui/build-continent-selector";
 import resize from "./resize";
 import removeSvg from "./svg/remove-svg";
 
@@ -27,6 +30,8 @@ function Widget(data) {
 	this.destins = [];
 	this.continents = [];
 	this.groupByContinents = data.hasOwnProperty("groupByContinents") ? data.groupByContinents : false;
+	this.duration = 500;
+	this.textLimit = 40000;
 }
 
 Widget.prototype.updateProps = function(data) {
@@ -52,6 +57,7 @@ Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
 Widget.prototype.buildTopTenSelector = buildTopTenSelector;
+Widget.prototype.buildContinentSelector = buildContinentSelector;
 Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 

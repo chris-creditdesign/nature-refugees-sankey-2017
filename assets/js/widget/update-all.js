@@ -6,7 +6,9 @@ function updateAll() {
 		this.selectedCountry = "";
 	}
 	
-	this.buildLinks();
+	this.buildLinks()
+		.buildNodes()
+		.buildText();
 
 	return this;
 }

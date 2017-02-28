@@ -83,7 +83,7 @@
   shape-rendering: crispEdges;
 }
 
-.outerwrapper .node text, .outerwrapper text {
+.outerwrapper .text text, .outerwrapper text {
   font-size: 0.9em;
   pointer-events: none;
   font-family: arial,helvetica,clean,sans-serif;

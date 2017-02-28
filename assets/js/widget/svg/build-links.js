@@ -39,12 +39,13 @@ function buildLinks() {
 		// Only make the group if it doesn't already exist
 		this.g_links = this.svg_g.append("g")
 			.attr("class", "links");
-
 	}
 
 	this.links = this.g_links
 		.selectAll("path")
-		.data(filterdLinks);
+		.data(filterdLinks, function(d) {
+			return d.id;
+		});
 	
 	// Enter	
 	this.links.enter()
@@ -69,6 +70,8 @@ function buildLinks() {
 
 	// Update
 	this.links
+		.transition()
+		.duration(this.duration)
 		.attr("d", this.path)
 		.style("stroke-width", function(d) {
 			return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
@@ -78,18 +81,18 @@ function buildLinks() {
 		})
 		.attr("class", () => {
 			return shouldHaveGradient() ? "link gradient" : "link";
-		})
-		.on("mouseover", function(d) {
-			that.buildTooltip(d, this);
-		})
-		.on("mouseout", function() {
-			d3.select("#widget-tooltip")
-				.classed("hidden", true);
 		});
 
+		// .on("mouseover", function(d) {
+		// 	that.buildTooltip(d, this);
+		// })
+		// .on("mouseout", function() {
+		// 	d3.select("#widget-tooltip")
+		// 		.classed("hidden", true);
+		// });
+
 	// Exit
-	this.links
-		.exit()
+	this.links.exit()
 		.remove();
 
 	return this;
