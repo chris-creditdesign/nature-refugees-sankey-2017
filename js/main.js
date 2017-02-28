@@ -407,7 +407,7 @@ var array = Array.prototype;
 var slice = array.slice;
 var map = array.map;
 
-var constant = function (x) {
+var constant$1 = function (x) {
   return function () {
     return x;
   };
@@ -1357,7 +1357,7 @@ function basis(t1, v0, v1, v2, v3) {
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
 }
 
-var constant$1 = function (x) {
+var constant$2 = function (x) {
   return function () {
     return x;
   };
@@ -1377,18 +1377,18 @@ function exponential(a, b, y) {
 
 function hue(a, b) {
   var d = b - a;
-  return d ? linear$1(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$1(isNaN(a) ? b : a);
+  return d ? linear$1(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : constant$2(isNaN(a) ? b : a);
 }
 
 function gamma(y) {
   return (y = +y) === 1 ? nogamma : function (a, b) {
-    return b - a ? exponential(a, b, y) : constant$1(isNaN(a) ? b : a);
+    return b - a ? exponential(a, b, y) : constant$2(isNaN(a) ? b : a);
   };
 }
 
 function nogamma(a, b) {
   var d = b - a;
-  return d ? linear$1(a, d) : constant$1(isNaN(a) ? b : a);
+  return d ? linear$1(a, d) : constant$2(isNaN(a) ? b : a);
 }
 
 var rgb$2 = (function rgbGamma(y) {
@@ -1628,7 +1628,7 @@ var string = function (a, b) {
 var interpolateValue = function (a, b) {
     var t = typeof b === "undefined" ? "undefined" : _typeof(b),
         c;
-    return b == null || t === "boolean" ? constant$1(b) : (t === "number" ? interpolateNumber : t === "string" ? (c = color(b)) ? (b = c, rgb$2) : string : b instanceof color ? rgb$2 : b instanceof Date ? date : Array.isArray(b) ? array$2 : isNaN(b) ? object$1 : interpolateNumber)(a, b);
+    return b == null || t === "boolean" ? constant$2(b) : (t === "number" ? interpolateNumber : t === "string" ? (c = color(b)) ? (b = c, rgb$2) : string : b instanceof color ? rgb$2 : b instanceof Date ? date : Array.isArray(b) ? array$2 : isNaN(b) ? object$1 : interpolateNumber)(a, b);
 };
 
 var interpolateRound = function (a, b) {
@@ -1716,7 +1716,7 @@ function cubehelix$1(hue$$1) {
 cubehelix$1(hue);
 var cubehelixLong = cubehelix$1(nogamma);
 
-var constant$2 = function (x) {
+var constant$3 = function (x) {
   return function () {
     return x;
   };
@@ -1731,7 +1731,7 @@ var unit = [0, 1];
 function deinterpolateLinear(a, b) {
   return (b -= a = +a) ? function (x) {
     return (x - a) / b;
-  } : constant$2(b);
+  } : constant$3(b);
 }
 
 function deinterpolateClamp(deinterpolate) {
@@ -1955,7 +1955,7 @@ var nice = function (domain, interval) {
 function deinterpolate(a, b) {
   return (b = Math.log(b / a)) ? function (x) {
     return Math.log(x / a) / b;
-  } : constant$2(b);
+  } : constant$3(b);
 }
 
 function reinterpolate(a, b) {
@@ -2092,7 +2092,7 @@ function pow() {
   function deinterpolate(a, b) {
     return (b = raise(b, exponent) - (a = raise(a, exponent))) ? function (x) {
       return (raise(x, exponent) - a) / b;
-    } : constant$2(b);
+    } : constant$3(b);
   }
 
   function reinterpolate(a, b) {
@@ -3395,7 +3395,7 @@ var sourceEvent = function () {
   }return current;
 };
 
-var point$1 = function (node, event) {
+var point$2 = function (node, event) {
   var svg = node.ownerSVGElement || node;
 
   if (svg.createSVGPoint) {
@@ -3503,7 +3503,7 @@ EnterNode.prototype = {
   }
 };
 
-var constant$3 = function (x) {
+var constant$4 = function (x) {
   return function () {
     return x;
   };
@@ -3594,7 +3594,7 @@ var selection_data = function (value, key) {
       parents = this._parents,
       groups = this._groups;
 
-  if (typeof value !== "function") value = constant$3(value);
+  if (typeof value !== "function") value = constant$4(value);
 
   for (var m = groups.length, update = new Array(m), enter = new Array(m), exit = new Array(m), j = 0; j < m; ++j) {
     var parent = parents[j],
@@ -4898,6 +4898,1187 @@ var csv = dsv$1("text/csv", csvParse);
 
 dsv$1("text/tab-separated-values", tsvParse);
 
+var pi = Math.PI;
+var tau = 2 * pi;
+var epsilon = 1e-6;
+var tauEpsilon = tau - epsilon;
+
+function Path() {
+  this._x0 = this._y0 = // start of current subpath
+  this._x1 = this._y1 = null; // end of current subpath
+  this._ = "";
+}
+
+function path() {
+  return new Path();
+}
+
+Path.prototype = path.prototype = {
+  constructor: Path,
+  moveTo: function moveTo(x, y) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
+  },
+  closePath: function closePath() {
+    if (this._x1 !== null) {
+      this._x1 = this._x0, this._y1 = this._y0;
+      this._ += "Z";
+    }
+  },
+  lineTo: function lineTo(x, y) {
+    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  quadraticCurveTo: function quadraticCurveTo(x1, y1, x, y) {
+    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  bezierCurveTo: function bezierCurveTo(x1, y1, x2, y2, x, y) {
+    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  arcTo: function arcTo(x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    var x0 = this._x1,
+        y0 = this._y1,
+        x21 = x2 - x1,
+        y21 = y2 - y1,
+        x01 = x0 - x1,
+        y01 = y0 - y1,
+        l01_2 = x01 * x01 + y01 * y01;
+
+    // Is the radius negative? Error.
+    if (r < 0) throw new Error("negative radius: " + r);
+
+    // Is this path empty? Move to (x1,y1).
+    if (this._x1 === null) {
+      this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1);
+    }
+
+    // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
+    else if (!(l01_2 > epsilon)) {}
+
+      // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
+      // Equivalently, is (x1,y1) coincident with (x2,y2)?
+      // Or, is the radius zero? Line to (x1,y1).
+      else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
+          this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
+        }
+
+        // Otherwise, draw an arc!
+        else {
+            var x20 = x2 - x0,
+                y20 = y2 - y0,
+                l21_2 = x21 * x21 + y21 * y21,
+                l20_2 = x20 * x20 + y20 * y20,
+                l21 = Math.sqrt(l21_2),
+                l01 = Math.sqrt(l01_2),
+                l = r * Math.tan((pi - Math.acos((l21_2 + l01_2 - l20_2) / (2 * l21 * l01))) / 2),
+                t01 = l / l01,
+                t21 = l / l21;
+
+            // If the start tangent is not coincident with (x0,y0), line to.
+            if (Math.abs(t01 - 1) > epsilon) {
+              this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
+            }
+
+            this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+          }
+  },
+  arc: function arc(x, y, r, a0, a1, ccw) {
+    x = +x, y = +y, r = +r;
+    var dx = r * Math.cos(a0),
+        dy = r * Math.sin(a0),
+        x0 = x + dx,
+        y0 = y + dy,
+        cw = 1 ^ ccw,
+        da = ccw ? a0 - a1 : a1 - a0;
+
+    // Is the radius negative? Error.
+    if (r < 0) throw new Error("negative radius: " + r);
+
+    // Is this path empty? Move to (x0,y0).
+    if (this._x1 === null) {
+      this._ += "M" + x0 + "," + y0;
+    }
+
+    // Or, is (x0,y0) not coincident with the previous point? Line to (x0,y0).
+    else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
+        this._ += "L" + x0 + "," + y0;
+      }
+
+    // Is this arc empty? We’re done.
+    if (!r) return;
+
+    // Is this a complete circle? Draw two arcs to complete the circle.
+    if (da > tauEpsilon) {
+      this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0);
+    }
+
+    // Otherwise, draw an arc!
+    else {
+        if (da < 0) da = da % tau + tau;
+        this._ += "A" + r + "," + r + ",0," + +(da >= pi) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
+      }
+  },
+  rect: function rect(x, y, w, h) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + +w + "v" + +h + "h" + -w + "Z";
+  },
+  toString: function toString() {
+    return this._;
+  }
+};
+
+var constant$5 = function (x) {
+  return function constant() {
+    return x;
+  };
+};
+
+var epsilon$1 = 1e-12;
+var pi$1 = Math.PI;
+var halfPi = pi$1 / 2;
+var tau$1 = 2 * pi$1;
+
+function arcInnerRadius(d) {
+  return d.innerRadius;
+}
+
+function arcOuterRadius(d) {
+  return d.outerRadius;
+}
+
+function arcStartAngle(d) {
+  return d.startAngle;
+}
+
+function arcEndAngle(d) {
+  return d.endAngle;
+}
+
+function arcPadAngle(d) {
+  return d && d.padAngle; // Note: optional!
+}
+
+function asin(x) {
+  return x >= 1 ? halfPi : x <= -1 ? -halfPi : Math.asin(x);
+}
+
+function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
+  var x10 = x1 - x0,
+      y10 = y1 - y0,
+      x32 = x3 - x2,
+      y32 = y3 - y2,
+      t = (x32 * (y0 - y2) - y32 * (x0 - x2)) / (y32 * x10 - x32 * y10);
+  return [x0 + t * x10, y0 + t * y10];
+}
+
+// Compute perpendicular offset line of length rc.
+// http://mathworld.wolfram.com/Circle-LineIntersection.html
+function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
+  var x01 = x0 - x1,
+      y01 = y0 - y1,
+      lo = (cw ? rc : -rc) / Math.sqrt(x01 * x01 + y01 * y01),
+      ox = lo * y01,
+      oy = -lo * x01,
+      x11 = x0 + ox,
+      y11 = y0 + oy,
+      x10 = x1 + ox,
+      y10 = y1 + oy,
+      x00 = (x11 + x10) / 2,
+      y00 = (y11 + y10) / 2,
+      dx = x10 - x11,
+      dy = y10 - y11,
+      d2 = dx * dx + dy * dy,
+      r = r1 - rc,
+      D = x11 * y10 - x10 * y11,
+      d = (dy < 0 ? -1 : 1) * Math.sqrt(Math.max(0, r * r * d2 - D * D)),
+      cx0 = (D * dy - dx * d) / d2,
+      cy0 = (-D * dx - dy * d) / d2,
+      cx1 = (D * dy + dx * d) / d2,
+      cy1 = (-D * dx + dy * d) / d2,
+      dx0 = cx0 - x00,
+      dy0 = cy0 - y00,
+      dx1 = cx1 - x00,
+      dy1 = cy1 - y00;
+
+  // Pick the closer of the two intersection points.
+  // TODO Is there a faster way to determine which intersection to use?
+  if (dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1) cx0 = cx1, cy0 = cy1;
+
+  return {
+    cx: cx0,
+    cy: cy0,
+    x01: -ox,
+    y01: -oy,
+    x11: cx0 * (r1 / r - 1),
+    y11: cy0 * (r1 / r - 1)
+  };
+}
+
+function Linear(context) {
+  this._context = context;
+}
+
+Linear.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);break;
+      case 1:
+        this._point = 2; // proceed
+      default:
+        this._context.lineTo(x, y);break;
+    }
+  }
+};
+
+var curveLinear = function (context) {
+  return new Linear(context);
+};
+
+function x$1(p) {
+  return p[0];
+}
+
+function y(p) {
+  return p[1];
+}
+
+var line = function () {
+  var x$$1 = x$1,
+      y$$1 = y,
+      defined = constant$5(true),
+      context = null,
+      curve = curveLinear,
+      output = null;
+
+  function line(data) {
+    var i,
+        n = data.length,
+        d,
+        defined0 = false,
+        buffer;
+
+    if (context == null) output = curve(buffer = path());
+
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) output.lineStart();else output.lineEnd();
+      }
+      if (defined0) output.point(+x$$1(d, i, data), +y$$1(d, i, data));
+    }
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  line.x = function (_) {
+    return arguments.length ? (x$$1 = typeof _ === "function" ? _ : constant$5(+_), line) : x$$1;
+  };
+
+  line.y = function (_) {
+    return arguments.length ? (y$$1 = typeof _ === "function" ? _ : constant$5(+_), line) : y$$1;
+  };
+
+  line.defined = function (_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : constant$5(!!_), line) : defined;
+  };
+
+  line.curve = function (_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+  };
+
+  line.context = function (_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+  };
+
+  return line;
+};
+
+var area = function () {
+  var x0 = x$1,
+      x1 = null,
+      y0 = constant$5(0),
+      y1 = y,
+      defined = constant$5(true),
+      context = null,
+      curve = curveLinear,
+      output = null;
+
+  function area(data) {
+    var i,
+        j,
+        k,
+        n = data.length,
+        d,
+        defined0 = false,
+        buffer,
+        x0z = new Array(n),
+        y0z = new Array(n);
+
+    if (context == null) output = curve(buffer = path());
+
+    for (i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) {
+        if (defined0 = !defined0) {
+          j = i;
+          output.areaStart();
+          output.lineStart();
+        } else {
+          output.lineEnd();
+          output.lineStart();
+          for (k = i - 1; k >= j; --k) {
+            output.point(x0z[k], y0z[k]);
+          }
+          output.lineEnd();
+          output.areaEnd();
+        }
+      }
+      if (defined0) {
+        x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data);
+        output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]);
+      }
+    }
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  function arealine() {
+    return line().defined(defined).curve(curve).context(context);
+  }
+
+  area.x = function (_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : constant$5(+_), x1 = null, area) : x0;
+  };
+
+  area.x0 = function (_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : constant$5(+_), area) : x0;
+  };
+
+  area.x1 = function (_) {
+    return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : constant$5(+_), area) : x1;
+  };
+
+  area.y = function (_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : constant$5(+_), y1 = null, area) : y0;
+  };
+
+  area.y0 = function (_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : constant$5(+_), area) : y0;
+  };
+
+  area.y1 = function (_) {
+    return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : constant$5(+_), area) : y1;
+  };
+
+  area.lineX0 = area.lineY0 = function () {
+    return arealine().x(x0).y(y0);
+  };
+
+  area.lineY1 = function () {
+    return arealine().x(x0).y(y1);
+  };
+
+  area.lineX1 = function () {
+    return arealine().x(x1).y(y0);
+  };
+
+  area.defined = function (_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : constant$5(!!_), area) : defined;
+  };
+
+  area.curve = function (_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
+  };
+
+  area.context = function (_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
+  };
+
+  return area;
+};
+
+var descending$1 = function (a, b) {
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+};
+
+var identity$4 = function (d) {
+  return d;
+};
+
+var curveRadialLinear = curveRadial(curveLinear);
+
+function Radial(curve) {
+  this._curve = curve;
+}
+
+Radial.prototype = {
+  areaStart: function areaStart() {
+    this._curve.areaStart();
+  },
+  areaEnd: function areaEnd() {
+    this._curve.areaEnd();
+  },
+  lineStart: function lineStart() {
+    this._curve.lineStart();
+  },
+  lineEnd: function lineEnd() {
+    this._curve.lineEnd();
+  },
+  point: function point(a, r) {
+    this._curve.point(r * Math.sin(a), r * -Math.cos(a));
+  }
+};
+
+function curveRadial(curve) {
+
+  function radial(context) {
+    return new Radial(curve(context));
+  }
+
+  radial._curve = curve;
+
+  return radial;
+}
+
+function radialLine(l) {
+  var c = l.curve;
+
+  l.angle = l.x, delete l.x;
+  l.radius = l.y, delete l.y;
+
+  l.curve = function (_) {
+    return arguments.length ? c(curveRadial(_)) : c()._curve;
+  };
+
+  return l;
+}
+
+var circle = {
+  draw: function draw(context, size) {
+    var r = Math.sqrt(size / pi$1);
+    context.moveTo(r, 0);
+    context.arc(0, 0, r, 0, tau$1);
+  }
+};
+
+var sqrt3 = Math.sqrt(3);
+
+var triangle = {
+  draw: function draw(context, size) {
+    var y = -Math.sqrt(size / (sqrt3 * 3));
+    context.moveTo(0, y * 2);
+    context.lineTo(-sqrt3 * y, -y);
+    context.lineTo(sqrt3 * y, -y);
+    context.closePath();
+  }
+};
+
+var symbol = function () {
+  var type = constant$5(circle),
+      size = constant$5(64),
+      context = null;
+
+  function symbol() {
+    var buffer;
+    if (!context) context = buffer = path();
+    type.apply(this, arguments).draw(context, +size.apply(this, arguments));
+    if (buffer) return context = null, buffer + "" || null;
+  }
+
+  symbol.type = function (_) {
+    return arguments.length ? (type = typeof _ === "function" ? _ : constant$5(_), symbol) : type;
+  };
+
+  symbol.size = function (_) {
+    return arguments.length ? (size = typeof _ === "function" ? _ : constant$5(+_), symbol) : size;
+  };
+
+  symbol.context = function (_) {
+    return arguments.length ? (context = _ == null ? null : _, symbol) : context;
+  };
+
+  return symbol;
+};
+
+var noop$1 = function () {};
+
+function _point(that, x, y) {
+  that._context.bezierCurveTo((2 * that._x0 + that._x1) / 3, (2 * that._y0 + that._y1) / 3, (that._x0 + 2 * that._x1) / 3, (that._y0 + 2 * that._y1) / 3, (that._x0 + 4 * that._x1 + x) / 6, (that._y0 + 4 * that._y1 + y) / 6);
+}
+
+function Basis(context) {
+  this._context = context;
+}
+
+Basis.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 3:
+        _point(this, this._x1, this._y1); // proceed
+      case 2:
+        this._context.lineTo(this._x1, this._y1);break;
+    }
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);break;
+      case 1:
+        this._point = 2;break;
+      case 2:
+        this._point = 3;this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6); // proceed
+      default:
+        _point(this, x, y);break;
+    }
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+  }
+};
+
+function Bundle(context, beta) {
+  this._basis = new Basis(context);
+  this._beta = beta;
+}
+
+Bundle.prototype = {
+  lineStart: function lineStart() {
+    this._x = [];
+    this._y = [];
+    this._basis.lineStart();
+  },
+  lineEnd: function lineEnd() {
+    var x = this._x,
+        y = this._y,
+        j = x.length - 1;
+
+    if (j > 0) {
+      var x0 = x[0],
+          y0 = y[0],
+          dx = x[j] - x0,
+          dy = y[j] - y0,
+          i = -1,
+          t;
+
+      while (++i <= j) {
+        t = i / j;
+        this._basis.point(this._beta * x[i] + (1 - this._beta) * (x0 + t * dx), this._beta * y[i] + (1 - this._beta) * (y0 + t * dy));
+      }
+    }
+
+    this._x = this._y = null;
+    this._basis.lineEnd();
+  },
+  point: function point(x, y) {
+    this._x.push(+x);
+    this._y.push(+y);
+  }
+};
+
+(function custom(beta) {
+
+  function bundle(context) {
+    return beta === 1 ? new Basis(context) : new Bundle(context, beta);
+  }
+
+  bundle.beta = function (beta) {
+    return custom(+beta);
+  };
+
+  return bundle;
+})(0.85);
+
+function _point$1(that, x, y) {
+  that._context.bezierCurveTo(that._x1 + that._k * (that._x2 - that._x0), that._y1 + that._k * (that._y2 - that._y0), that._x2 + that._k * (that._x1 - x), that._y2 + that._k * (that._y1 - y), that._x2, that._y2);
+}
+
+function Cardinal(context, tension) {
+  this._context = context;
+  this._k = (1 - tension) / 6;
+}
+
+Cardinal.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x2, this._y2);break;
+      case 3:
+        _point$1(this, this._x1, this._y1);break;
+    }
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);break;
+      case 1:
+        this._point = 2;this._x1 = x, this._y1 = y;break;
+      case 2:
+        this._point = 3; // proceed
+      default:
+        _point$1(this, x, y);break;
+    }
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+(function custom(tension) {
+
+  function cardinal(context) {
+    return new Cardinal(context, tension);
+  }
+
+  cardinal.tension = function (tension) {
+    return custom(+tension);
+  };
+
+  return cardinal;
+})(0);
+
+function CardinalClosed(context, tension) {
+  this._context = context;
+  this._k = (1 - tension) / 6;
+}
+
+CardinalClosed.prototype = {
+  areaStart: noop$1,
+  areaEnd: noop$1,
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x3, this._y3);
+          this._context.closePath();
+          break;
+        }
+      case 2:
+        {
+          this._context.lineTo(this._x3, this._y3);
+          this._context.closePath();
+          break;
+        }
+      case 3:
+        {
+          this.point(this._x3, this._y3);
+          this.point(this._x4, this._y4);
+          this.point(this._x5, this._y5);
+          break;
+        }
+    }
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._x3 = x, this._y3 = y;break;
+      case 1:
+        this._point = 2;this._context.moveTo(this._x4 = x, this._y4 = y);break;
+      case 2:
+        this._point = 3;this._x5 = x, this._y5 = y;break;
+      default:
+        _point$1(this, x, y);break;
+    }
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+(function custom(tension) {
+
+  function cardinal(context) {
+    return new CardinalClosed(context, tension);
+  }
+
+  cardinal.tension = function (tension) {
+    return custom(+tension);
+  };
+
+  return cardinal;
+})(0);
+
+function CardinalOpen(context, tension) {
+  this._context = context;
+  this._k = (1 - tension) / 6;
+}
+
+CardinalOpen.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    if (this._line || this._line !== 0 && this._point === 3) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+    switch (this._point) {
+      case 0:
+        this._point = 1;break;
+      case 1:
+        this._point = 2;break;
+      case 2:
+        this._point = 3;this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);break;
+      case 3:
+        this._point = 4; // proceed
+      default:
+        _point$1(this, x, y);break;
+    }
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+(function custom(tension) {
+
+  function cardinal(context) {
+    return new CardinalOpen(context, tension);
+  }
+
+  cardinal.tension = function (tension) {
+    return custom(+tension);
+  };
+
+  return cardinal;
+})(0);
+
+function _point$2(that, x, y) {
+  var x1 = that._x1,
+      y1 = that._y1,
+      x2 = that._x2,
+      y2 = that._y2;
+
+  if (that._l01_a > epsilon$1) {
+    var a = 2 * that._l01_2a + 3 * that._l01_a * that._l12_a + that._l12_2a,
+        n = 3 * that._l01_a * (that._l01_a + that._l12_a);
+    x1 = (x1 * a - that._x0 * that._l12_2a + that._x2 * that._l01_2a) / n;
+    y1 = (y1 * a - that._y0 * that._l12_2a + that._y2 * that._l01_2a) / n;
+  }
+
+  if (that._l23_a > epsilon$1) {
+    var b = 2 * that._l23_2a + 3 * that._l23_a * that._l12_a + that._l12_2a,
+        m = 3 * that._l23_a * (that._l23_a + that._l12_a);
+    x2 = (x2 * b + that._x1 * that._l23_2a - x * that._l12_2a) / m;
+    y2 = (y2 * b + that._y1 * that._l23_2a - y * that._l12_2a) / m;
+  }
+
+  that._context.bezierCurveTo(x1, y1, x2, y2, that._x2, that._y2);
+}
+
+function CatmullRom(context, alpha) {
+  this._context = context;
+  this._alpha = alpha;
+}
+
+CatmullRom.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x2, this._y2);break;
+      case 3:
+        this.point(this._x2, this._y2);break;
+    }
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+
+    if (this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);break;
+      case 1:
+        this._point = 2;break;
+      case 2:
+        this._point = 3; // proceed
+      default:
+        _point$2(this, x, y);break;
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a;
+    this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a;
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+(function custom(alpha) {
+
+  function catmullRom(context) {
+    return alpha ? new CatmullRom(context, alpha) : new Cardinal(context, 0);
+  }
+
+  catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  };
+
+  return catmullRom;
+})(0.5);
+
+function CatmullRomClosed(context, alpha) {
+  this._context = context;
+  this._alpha = alpha;
+}
+
+CatmullRomClosed.prototype = {
+  areaStart: noop$1,
+  areaEnd: noop$1,
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN;
+    this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x3, this._y3);
+          this._context.closePath();
+          break;
+        }
+      case 2:
+        {
+          this._context.lineTo(this._x3, this._y3);
+          this._context.closePath();
+          break;
+        }
+      case 3:
+        {
+          this.point(this._x3, this._y3);
+          this.point(this._x4, this._y4);
+          this.point(this._x5, this._y5);
+          break;
+        }
+    }
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+
+    if (this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._x3 = x, this._y3 = y;break;
+      case 1:
+        this._point = 2;this._context.moveTo(this._x4 = x, this._y4 = y);break;
+      case 2:
+        this._point = 3;this._x5 = x, this._y5 = y;break;
+      default:
+        _point$2(this, x, y);break;
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a;
+    this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a;
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+(function custom(alpha) {
+
+  function catmullRom(context) {
+    return alpha ? new CatmullRomClosed(context, alpha) : new CardinalClosed(context, 0);
+  }
+
+  catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  };
+
+  return catmullRom;
+})(0.5);
+
+function CatmullRomOpen(context, alpha) {
+  this._context = context;
+  this._alpha = alpha;
+}
+
+CatmullRomOpen.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN;
+    this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    if (this._line || this._line !== 0 && this._point === 3) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    x = +x, y = +y;
+
+    if (this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;break;
+      case 1:
+        this._point = 2;break;
+      case 2:
+        this._point = 3;this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);break;
+      case 3:
+        this._point = 4; // proceed
+      default:
+        _point$2(this, x, y);break;
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a;
+    this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a;
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x;
+    this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+
+(function custom(alpha) {
+
+  function catmullRom(context) {
+    return alpha ? new CatmullRomOpen(context, alpha) : new CardinalOpen(context, 0);
+  }
+
+  catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  };
+
+  return catmullRom;
+})(0.5);
+
+function sign(x) {
+  return x < 0 ? -1 : 1;
+}
+
+// Calculate the slopes of the tangents (Hermite-type interpolation) based on
+// the following paper: Steffen, M. 1990. A Simple Method for Monotonic
+// Interpolation in One Dimension. Astronomy and Astrophysics, Vol. 239, NO.
+// NOV(II), P. 443, 1990.
+function slope3(that, x2, y2) {
+  var h0 = that._x1 - that._x0,
+      h1 = x2 - that._x1,
+      s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0),
+      s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0),
+      p = (s0 * h1 + s1 * h0) / (h0 + h1);
+  return (sign(s0) + sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), 0.5 * Math.abs(p)) || 0;
+}
+
+// Calculate a one-sided slope.
+function slope2(that, t) {
+  var h = that._x1 - that._x0;
+  return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
+}
+
+// According to https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Representations
+// "you can express cubic Hermite interpolation in terms of cubic Bézier curves
+// with respect to the four values p0, p0 + m0 / 3, p1 - m1 / 3, p1".
+function _point$3(that, t0, t1) {
+  var x0 = that._x0,
+      y0 = that._y0,
+      x1 = that._x1,
+      y1 = that._y1,
+      dx = (x1 - x0) / 3;
+  that._context.bezierCurveTo(x0 + dx, y0 + dx * t0, x1 - dx, y1 - dx * t1, x1, y1);
+}
+
+function MonotoneX(context) {
+  this._context = context;
+}
+
+MonotoneX.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN;
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x1, this._y1);break;
+      case 3:
+        _point$3(this, this._t0, slope2(this, this._t0));break;
+    }
+    if (this._line || this._line !== 0 && this._point === 1) this._context.closePath();
+    this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    var t1 = NaN;
+
+    x = +x, y = +y;
+    if (x === this._x1 && y === this._y1) return; // Ignore coincident points.
+    switch (this._point) {
+      case 0:
+        this._point = 1;this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);break;
+      case 1:
+        this._point = 2;break;
+      case 2:
+        this._point = 3;_point$3(this, slope2(this, t1 = slope3(this, x, y)), t1);break;
+      default:
+        _point$3(this, this._t0, t1 = slope3(this, x, y));break;
+    }
+
+    this._x0 = this._x1, this._x1 = x;
+    this._y0 = this._y1, this._y1 = y;
+    this._t0 = t1;
+  }
+};
+
+function MonotoneY(context) {
+  this._context = new ReflectContext(context);
+}
+
+(MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function (x, y) {
+  MonotoneX.prototype.point.call(this, y, x);
+};
+
+function ReflectContext(context) {
+  this._context = context;
+}
+
+ReflectContext.prototype = {
+  moveTo: function moveTo(x, y) {
+    this._context.moveTo(y, x);
+  },
+  closePath: function closePath() {
+    this._context.closePath();
+  },
+  lineTo: function lineTo(x, y) {
+    this._context.lineTo(y, x);
+  },
+  bezierCurveTo: function bezierCurveTo(x1, y1, x2, y2, x, y) {
+    this._context.bezierCurveTo(y1, x1, y2, x2, y, x);
+  }
+};
+
+function controlPoints(x) {
+  var i,
+      n = x.length - 1,
+      m,
+      a = new Array(n),
+      b = new Array(n),
+      r = new Array(n);
+  a[0] = 0, b[0] = 2, r[0] = x[0] + 2 * x[1];
+  for (i = 1; i < n - 1; ++i) {
+    a[i] = 1, b[i] = 4, r[i] = 4 * x[i] + 2 * x[i + 1];
+  }a[n - 1] = 2, b[n - 1] = 7, r[n - 1] = 8 * x[n - 1] + x[n];
+  for (i = 1; i < n; ++i) {
+    m = a[i] / b[i - 1], b[i] -= m, r[i] -= m * r[i - 1];
+  }a[n - 1] = r[n - 1] / b[n - 1];
+  for (i = n - 2; i >= 0; --i) {
+    a[i] = (r[i] - a[i + 1]) / b[i];
+  }b[n - 1] = (x[n] + a[n - 1]) / 2;
+  for (i = 0; i < n - 1; ++i) {
+    b[i] = 2 * x[i + 1] - a[i + 1];
+  }return [a, b];
+}
+
+var slice$2 = Array.prototype.slice;
+
+var none$1 = function (series, order) {
+  if (!((n = series.length) > 1)) return;
+  for (var i = 1, s0, s1 = series[order[0]], n, m = s1.length; i < n; ++i) {
+    s0 = s1, s1 = series[order[i]];
+    for (var j = 0; j < m; ++j) {
+      s1[j][1] += s1[j][0] = isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
+    }
+  }
+};
+
+var none$2 = function (series) {
+  var n = series.length,
+      o = new Array(n);
+  while (--n >= 0) {
+    o[n] = n;
+  }return o;
+};
+
+function stackValue(d, key) {
+  return d[key];
+}
+
+function sum$1(series) {
+  var s = 0,
+      i = -1,
+      n = series.length,
+      v;
+  while (++i < n) {
+    if (v = +series[i][1]) s += v;
+  }return s;
+}
+
 var d3 = {
 	format: format$1,
 	scaleOrdinal: ordinal,
@@ -4906,7 +6087,9 @@ var d3 = {
 	sankey: sankey,
 	rgb: rgb$1,
 	csv: csv,
-	nest: nest
+	nest: nest,
+	symbol: symbol,
+	symbolTriangle: triangle
 };
 
 function buildSvg() {
@@ -5235,6 +6418,31 @@ function buildText() {
 	return this;
 }
 
+function buildLabels() {
+	var label_width = {
+		left: 0,
+		right: 0
+	};
+
+	var triangle = d3.symbol().type(d3.symbolTriangle).size(30);
+
+	this.g_labels = this.svg_g.append("g").attr("class", "labels");
+
+	this.g_labels.append("text").attr("x", 0).attr("y", 0).attr("dy", "-0.5em").attr("text-anchor", "start").text("ORIGIN").select(function () {
+		label_width.left = this.getBBox().width;
+	});
+
+	this.g_labels.append("text").attr("x", this.width).attr("y", 0).attr("dy", "-0.5em").attr("text-anchor", "end").text("DESTINATION").select(function () {
+		label_width.right = this.getBBox().width;
+	});
+
+	this.g_labels.append("line").style("stroke", "#ffffff").attr("x1", label_width.left + 10).attr("y1", this.margin.top * -0.6).attr("x2", this.width - (label_width.right + 10)).attr("y2", this.margin.top * -0.6);
+
+	this.g_labels.append("path").attr("d", triangle()).attr("fill", "#ffffff").attr("transform", "translate(" + (this.width - (label_width.right + 10)) + "," + this.margin.top * -0.6 + ") rotate(90 0 0)");
+
+	return this;
+}
+
 function updateAll() {
 	this.buildLinks();
 
@@ -5288,7 +6496,7 @@ function buildTooltip(d, node) {
 function resize(width) {
 	this.removeSvg().updateProps({
 		width: width
-	}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText();
+	}).buildSvg().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildLabels();
 
 	return this;
 }
@@ -5304,7 +6512,7 @@ function removeSvg() {
 function Widget(data) {
 	this.totalWidth = data.width ? data.width : 630;
 	this.totalHeight = data.height ? data.height : 2500;
-	this.margin = data.margin ? data.margin : { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 };
+	this.margin = data.margin ? data.margin : { 'top': 20, 'left': 10, 'bottom': 10, 'right': 10 };
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 	this.data = data.data;
@@ -5317,10 +6525,9 @@ function Widget(data) {
 }
 
 Widget.prototype.updateProps = function (data) {
-	console.log(this.groupByContinents);
-	this.totalWidth = data.width ? data.width : 630;
-	this.totalHeight = data.height ? data.height : 2500;
-	this.margin = data.margin ? data.margin : { 'top': 0, 'left': 10, 'bottom': 10, 'right': 10 };
+	this.totalWidth = data.width ? data.width : this.totalWidth;
+	this.totalHeight = data.height ? data.height : this.totalHeight;
+	this.margin = data.margin ? data.margin : this.margin;
 	this.width = this.totalWidth - this.margin.left - this.margin.right;
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 	this.groupByContinents = data.hasOwnProperty("groupByContinents") ? data.groupByContinents : this.groupByContinents;
@@ -5335,6 +6542,7 @@ Widget.prototype.buildDefs = buildDefs;
 Widget.prototype.buildLinks = buildLinks;
 Widget.prototype.buildNodes = buildNodes;
 Widget.prototype.buildText = buildText;
+Widget.prototype.buildLabels = buildLabels;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
@@ -5367,7 +6575,7 @@ d3.csv(localUrl, function (error, data) {
 			groupByContinents: false
 		});
 
-		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildKey();
+		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildLabels().buildKey();
 
 		if (getWidth() !== width) {
 			width = getWidth();
