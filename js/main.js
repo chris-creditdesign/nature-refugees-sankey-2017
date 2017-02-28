@@ -6173,6 +6173,10 @@ function buildData() {
 	var nodes = [];
 	var uniqueNames;
 
+	function compareValue(a, b) {
+		return b.value - a.value;
+	}
+
 	this.data.forEach(function (elem, index, array) {
 		if (parseInt(elem.countryflow_2016, 10) > 0) {
 			nodes.push(correctNames(elem.origin_name) + "-o");
@@ -6203,8 +6207,14 @@ function buildData() {
 	this.continents = this.origins.concat(this.destins).map(shortName).filter(onlyUnique);
 
 	this.graph.links.forEach(function (elem, index, array) {
-		_this.graph.links[index].source = uniqueNames.indexOf(_this.graph.links[index].source);
-		_this.graph.links[index].target = uniqueNames.indexOf(_this.graph.links[index].target);
+		elem.source = uniqueNames.indexOf(elem.source);
+		elem.target = uniqueNames.indexOf(elem.target);
+		elem.id = elem.origin_name + " to " + elem.destination_name;
+	});
+
+	// Create an array with the ids of the top ten links
+	this.topLinks = this.graph.links.sort(compareValue).slice(0, 10).map(function (x) {
+		return x.id;
 	});
 
 	uniqueNames.forEach(function (elem, index, array) {
@@ -6285,9 +6295,9 @@ function format$2(d) {
 }
 
 function buildLinks() {
-	var _this = this;
-
 	var that = this;
+	var filterdLinks;
+	var notSelectedColor = "#fff";
 
 	function isSelected(elem) {
 		if (that.selectedCountry.slice(-2) === "-o") {
@@ -6299,7 +6309,23 @@ function buildLinks() {
 		}
 	}
 
-	var filterdLinks = this.graph.links.filter(isSelected);
+	function isTopTen(elem) {
+		return that.topLinks.indexOf(elem.id) > -1;
+	}
+
+	function shouldHaveGradient() {
+		return that.selectedCountry.length > 0 || that.showTopTen;
+	}
+
+	function buildGradient(d) {
+		return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
+	}
+
+	if (this.showTopTen) {
+		filterdLinks = this.graph.links.filter(isTopTen);
+	} else {
+		filterdLinks = this.graph.links.filter(isSelected);
+	}
 
 	if (!this.g_links) {
 		// Only make the group if it doesn't already exist
@@ -6309,52 +6335,28 @@ function buildLinks() {
 	this.links = this.g_links.selectAll("path").data(filterdLinks);
 
 	// Enter	
-	this.links.enter().append("path").attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
+	this.links.enter().append("path").attr("d", this.path).style("stroke-width", function (d) {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
-		if (_this.selectedCountry.length > 0) {
-			return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
-		} else {
-			return "#fff";
-		}
-	}).attr("opacity", function () {
-		return _this.selectedCountry.length > 0 ? 0.6 : 0.15;
+		return shouldHaveGradient() ? buildGradient(d) : notSelectedColor;
+	}).attr("class", function () {
+		return shouldHaveGradient() ? "link gradient" : "link";
 	}).on("mouseover", function (d) {
-		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
-		});
-
 		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
-		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 0.6 : 0.15;
-		});
-
 		d3.select("#widget-tooltip").classed("hidden", true);
 	});
 
 	// Update
-	this.links.attr("class", "link").attr("d", this.path).style("stroke-width", function (d) {
+	this.links.attr("d", this.path).style("stroke-width", function (d) {
 		return Math.max(1, d.dy); // Set the stroke to the dy value - making sure it is at least 1
 	}).style("stroke", function (d) {
-		if (_this.selectedCountry.length > 0) {
-			return "url(#" + shortName(d.originregion_name).toLowerCase().replace(/\s+/g, '-') + "-" + shortName(d.destinationregion_name).toLowerCase().replace(/\s+/g, '-') + ")";
-		} else {
-			return "#fff";
-		}
-	}).attr("opacity", function () {
-		return _this.selectedCountry.length > 0 ? 0.6 : 0.15;
+		return shouldHaveGradient() ? buildGradient(d) : notSelectedColor;
+	}).attr("class", function () {
+		return shouldHaveGradient() ? "link gradient" : "link";
 	}).on("mouseover", function (d) {
-		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 0.9 : 0.3;
-		});
-
 		that.buildTooltip(d, this);
 	}).on("mouseout", function () {
-		d3.select(this).attr("opacity", function () {
-			return that.selectedCountry.length > 0 ? 0.6 : 0.15;
-		});
-
 		d3.select("#widget-tooltip").classed("hidden", true);
 	});
 
@@ -6392,6 +6394,8 @@ function buildNodes() {
 			_this.selectedCountry = "";
 		}
 
+		_this.topTenCheckbox.property("checked", false);
+
 		_this.updateAll();
 	});
 
@@ -6412,7 +6416,7 @@ function buildText() {
 	this.nodes.selectAll("text").filter(function (d) {
 		// Only label countries with more than
 		// 25,000 people
-		return d.value < 25000;
+		return d.value < 40000;
 	}).remove();
 
 	return this;
@@ -6444,6 +6448,13 @@ function buildLabels() {
 }
 
 function updateAll() {
+
+	this.showTopTen = this.topTenCheckbox.property("checked");
+
+	if (this.showTopTen) {
+		this.selectedCountry = "";
+	}
+
 	this.buildLinks();
 
 	return this;
@@ -6493,6 +6504,18 @@ function buildTooltip(d, node) {
 	return this;
 }
 
+function buildTopTenSelector() {
+	var that = this;
+
+	this.topTenCheckbox = d3.select("#widget-checkbox").on("change", function () {
+		// that.showTopTen = this.checked;
+
+		that.updateAll();
+	});
+
+	return this;
+}
+
 function resize(width) {
 	this.removeSvg().updateProps({
 		width: width
@@ -6518,6 +6541,7 @@ function Widget(data) {
 	this.data = data.data;
 	this.target = data.target ? data.target : "body";
 	this.selectedCountry = "";
+	this.showTopTen = false;
 	this.origins = [];
 	this.destins = [];
 	this.continents = [];
@@ -6546,6 +6570,7 @@ Widget.prototype.buildLabels = buildLabels;
 Widget.prototype.updateAll = updateAll;
 Widget.prototype.buildKey = buildKey;
 Widget.prototype.buildTooltip = buildTooltip;
+Widget.prototype.buildTopTenSelector = buildTopTenSelector;
 Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 
@@ -6575,7 +6600,7 @@ d3.csv(localUrl, function (error, data) {
 			groupByContinents: false
 		});
 
-		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildLabels().buildKey();
+		myWidget.buildSvg().buildData().buildSankey().buildDefs().buildLinks().buildNodes().buildText().buildLabels().buildKey().buildTopTenSelector();
 
 		if (getWidth() !== width) {
 			width = getWidth();
