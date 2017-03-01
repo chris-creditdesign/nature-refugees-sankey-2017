@@ -8,7 +8,7 @@ function getWidth() {
 	return document.getElementById("content").getBoundingClientRect().width;
 }
 
-d3.csv(localUrl, function(error, data) {
+d3.csv(polopolyUrl, function(error, data) {
 	if (error) {
 		d3.select("#outerwrapper")
 			.style("display", "none");
