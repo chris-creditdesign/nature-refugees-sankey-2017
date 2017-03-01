@@ -115,6 +115,7 @@ var formatTypes = {
   }
 };
 
+// [[fill]align][sign][symbol][0][width][,][.precision][type]
 var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
 
 var formatSpecifier = function (specifier) {
@@ -6107,6 +6108,7 @@ ReflectContext.prototype = {
   }
 };
 
+// See https://www.particleincell.com/2012/bezier-splines/ for derivation.
 function controlPoints(x) {
   var i,
       n = x.length - 1,
@@ -7727,12 +7729,13 @@ Widget.prototype.buildContinentSelector = buildContinentSelector;
 Widget.prototype.resize = resize;
 Widget.prototype.removeSvg = removeSvg;
 
-var localUrl = "./data/refugee-data-edit.csv";
+var polopolyUrl = "http://www.nature.com/widget_assets_polopoly/refugee-data-edit.csv";
+
 function getWidth() {
 	return document.getElementById("content").getBoundingClientRect().width;
 }
 
-d3.csv(localUrl, function (error, data) {
+d3.csv(polopolyUrl, function (error, data) {
 	if (error) {
 		d3.select("#outerwrapper").style("display", "none");
 
