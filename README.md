@@ -1,4 +1,4 @@
-#Nature Refugees Sankey
+# Nature Refugees Sankey
 
 Interactive graphic for @naturenews
 
